@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace Stocker.Data
 {
-    public class WebParser
+    public class BigParaParser:IParser
     {
-
-        public async Task GetData()
+        public async Task<List<StockDto>> GetData()
         {
             var mainUrl = "http://push.bigpara.com/borsa/hisse-fiyatlari/";
             var harflist = new List<string> { "A", "B", "C", "D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Y","Z" };
@@ -35,8 +34,8 @@ namespace Stocker.Data
                 index++;
             }
             Console.WriteLine($"Toplam {bulkStockList.Count} hisse çekildi");
+            return bulkStockList;
         }
-
         public async Task<List<StockDto>> GetDataPerPage(Uri url)
         {
             HttpClient client = new HttpClient();
@@ -58,7 +57,7 @@ namespace Stocker.Data
                 {
                     var aTag = coloum.SelectSingleNode("a");
                     if (aTag != null) {
-                        stock.Title = aTag.InnerHtml;
+                        stock.StockName = aTag.InnerHtml;
                     }
                     list.Add(coloum.InnerHtml);
 
@@ -72,12 +71,12 @@ namespace Stocker.Data
                         numbers.Add(dec);
                     }
                 }
-                stock.Final = numbers[0];
-                stock.Yesterday= numbers[1];
+                stock.FinalPrice = numbers[0];
+                stock.YesterdayPrice= numbers[1];
                 stock.DailyChange= numbers[2];
-                stock.Highest= numbers[3];
-                stock.Lowest= numbers[4];
-                stock.Average= numbers[5];
+                stock.HighestPrice= numbers[3];
+                stock.LowestPrice= numbers[4];
+                stock.AveragePrice= numbers[5];
                 stock.VolumeLot= numbers[6];
                 stock.VolumeTL= numbers[7];
                 stockList.Add(stock);
@@ -87,16 +86,5 @@ namespace Stocker.Data
         }
     }
 
-    public class StockDto
-    {
-        public string Title { get; set; }
-        public decimal Final { get; set; }
-        public decimal Yesterday { get; set; }
-        public decimal DailyChange { get; set; }
-        public decimal Highest { get; set; }
-        public decimal Lowest { get; set; }
-        public decimal Average { get; set; }
-        public decimal VolumeLot { get; set; }
-        public decimal VolumeTL { get; set; }
-    }
+  
 }
