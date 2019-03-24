@@ -1,6 +1,7 @@
 ﻿using Stocker.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Stocker
@@ -11,10 +12,10 @@ namespace Stocker
         {
             repo = new Repository();
         }
-        private static List<StockDto> stocks;
-        private static Repository repo;
+        private List<StockDto> stocks;
+        private Repository repo;
 
-        static async Task WriteDb()
+        async Task WriteDb()
         {
             Console.WriteLine("Veritabanına yazılıyor...");
             await repo.WriteAll(stocks);
@@ -32,15 +33,19 @@ namespace Stocker
                     Console.WriteLine(stocks == null ? "Stock bilgisi çekilmedi" : "");
                     Console.WriteLine(stocks != null ? "Stocklar mevcut" : "");
                     Console.WriteLine("------------");
+                    Console.WriteLine("0-çıkış");
                     Console.WriteLine("1-data oku");
                     Console.WriteLine("2-veritabanına yaz");
-                    Console.WriteLine("3-çıkış");
+                    Console.WriteLine("3-BIST veritabanına olmayan kolonları ekle");
                     Console.WriteLine("------------");
                     Console.WriteLine("Seçiminizi yapınız...");
                     string secim = Console.ReadLine();
 
                     switch (secim)
                     {
+                        case "0":
+                            returnBack = false;
+                            break;
                         case "1":
                             Console.Clear();
                             Console.WriteLine("Stoklar çekiliyor");
@@ -79,10 +84,23 @@ namespace Stocker
                                 await WriteDb();
                             }
                             break;
-
                         case "3":
-                            returnBack = false;
-                            break;
+                            {
+                                Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
+                                var presentColoums = await repo.GetColomnNamesFromDbAsync("BIST");
+                                var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "Date" }).ToList();
+                                var colomnNames = stocks.Select(x => x.StockName);
+                                var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
+                                Console.WriteLine($"{newColomns.Count} adet yeni kolon eklenecek");
+                                var result = repo.AddDecimal62ColumnInDb("BIST", newColomns);
+                                if (result.Status == ServiceStatus.Created)
+                                {
+                                    Console.WriteLine("Yeni kolonlar eklendi");
+                                }
+                                Console.WriteLine("Kolonlar eklenemedi: " + result.Message);
+                                break;
+                            }
+
                     }
                     Console.WriteLine("Devam etmek için bir tuşa basınız...");
                     Console.ReadLine();
@@ -91,8 +109,7 @@ namespace Stocker
             }
             catch (Exception ex)
             {
-
-                throw;
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
     }

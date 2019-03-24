@@ -28,10 +28,11 @@ namespace Stocker
         {
             using (SqlConnection conn = GetOpenConnection())
             {
-                var lastRecord= (await conn.QueryAsync<StockDto>("Select * From Stocks Order By Id Desc")).FirstOrDefault();
+                var lastRecord= (await conn.QueryFirstAsync<StockDto>("Select * From Stocks Order By Id Desc"));
                 return lastRecord;
             }
         }
+
         public async Task WriteAll(List<StockDto> list)
         {   
             using (SqlConnection conn = GetOpenConnection())
@@ -69,5 +70,52 @@ namespace Stocker
                 await copy.WriteToServerAsync(table);
             }
         }
+
+        public ServiceResult AddDecimal62ColumnInDb(string dbName, List<string> columnNames)
+        {
+            if (columnNames != null)
+            {
+                if (columnNames.Count > 0)
+                {
+                    int totalAffectedRows = 0;
+                    using (SqlConnection conn = GetOpenConnection())
+                    {
+                        //using (var tran = conn.BeginTransaction())
+                        //{
+                            try
+                            {
+                                foreach (var column in columnNames)
+                                {
+                                    var affectedRow = conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(6,2);");
+                                    totalAffectedRows += 1;// affectedRow;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                //tran.Rollback();
+                                return new ServiceResult(ServiceStatus.Error, ex.Message);
+                            }
+
+                        //}
+                    }
+                    if (totalAffectedRows != columnNames.Count)
+                    {
+                        return new ServiceResult(ServiceStatus.Error,"kolon sayısı kadar eklenmedi");
+                    }
+                }
+            }
+            return new ServiceResult(ServiceStatus.Created);
+        }
+
+        public async Task<List<string>> GetColomnNamesFromDbAsync(string dbName)
+        {
+            using (SqlConnection conn = GetOpenConnection())
+            {
+                var result = (await conn.QueryAsync<string>($"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dbName}'")).ToList();
+                return result;
+            }
+        }
+
+
     }
 }
