@@ -10,18 +10,17 @@ namespace Stocker
     {
         static void Main(string[] args)
         {
-            //setup our DI
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
                 .AddSingleton<Repository>()
                 .AddSingleton<ConsoleClient>()
-                //.AddSingleton<IBarService, BarService>()
+                .AddSingleton<IParser, BigParaParser>()
                 .BuildServiceProvider();
 
             //configure console logging
             serviceProvider
                 .GetService<ILoggerFactory>()
-                .AddConsole(LogLevel.Debug);
+                .AddConsole(LogLevel.Trace);
 
             var logger = serviceProvider.GetService<ILoggerFactory>()
                 .CreateLogger<Program>();
@@ -30,10 +29,16 @@ namespace Stocker
             //do the actual work here
             var consoleClient = serviceProvider.GetService<ConsoleClient>();
             consoleClient.Run().Wait();
+        }
 
-            //logger.LogDebug("All done!");
-            //var client = new ConsoleClient();
-            //client.Run().Wait();
-        }       
+        //private static void ConfigureServices(IServiceCollection services)
+        //{
+        //    services
+        //      .AddLogging(opt =>
+        //      {
+        //          opt.AddConsole();
+        //          opt.SetMinimumLevel(LogLevel.Trace);
+        //      });
+        //}
     }
 }

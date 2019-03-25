@@ -9,21 +9,16 @@ namespace Stocker
 {
     public class ConsoleClient
     {
-        public ConsoleClient(Repository repo, ILogger<ConsoleClient> logger)
+        public ConsoleClient(Repository repo, ILogger<ConsoleClient> logger, IParser parser)
         {
             _repo = repo;
             _logger = logger;
+            _parser = parser;
         }
         private List<StockDto> stocks;
         private Repository _repo;
         private ILogger<ConsoleClient> _logger;
-
-        async Task WriteDb()
-        {
-            Console.WriteLine("Veritabanına yazılıyor...");
-            await _repo.WriteAll(stocks);
-            Console.WriteLine("Veritabanına yazılma işlemi tamamlandı.");
-        }
+        private IParser _parser;
 
         public async Task Run()
         {
@@ -37,11 +32,11 @@ namespace Stocker
                     Console.WriteLine(stocks != null ? "Stocklar mevcut" : "");
                     Console.WriteLine("------------");
                     Console.WriteLine("0-Çıkış");
-                    Console.WriteLine("1-Data oku");
+                    Console.WriteLine("1-Hisseleri Webden oku");
                     Console.WriteLine("2-STOCK tablosuna kaydet");
-                    Console.WriteLine("3-BIST kolonları ekle");
-                    Console.WriteLine("4-BIST kayıtları ekle");
-                    Console.WriteLine("5-BIST kolonları ekle ve kayıtları ekle");
+                    Console.WriteLine("3-BIST eksik kolonları ekle");
+                    Console.WriteLine("4-BIST kayıtları kaydet");
+                    Console.WriteLine("5-BIST eksik kolonları ekle ve kayıtları kaydet");
                     Console.WriteLine("------------");
                     Console.WriteLine("Seçiminizi yapınız...");
                     string secim = Console.ReadLine();
@@ -53,10 +48,7 @@ namespace Stocker
                             break;
                         case "1":
                             Console.Clear();
-                            Console.WriteLine("Stoklar çekiliyor");
-                            IParser parser = new BigParaParser();
-                            stocks = await parser.GetData();
-                            Console.WriteLine("Stoklar çekildi");
+                            stocks = await _parser.GetData();
                             break;
 
                         case "2":
@@ -71,7 +63,7 @@ namespace Stocker
                             {
                                 if (lastRecord.Date != DateTime.Today)
                                 {
-                                    await WriteDb();
+                                    await _repo.WriteAll(stocks);
                                 }
                                 else
                                 {
@@ -80,13 +72,13 @@ namespace Stocker
                                     var result = Console.ReadLine();
                                     if (result.ToLower() == "e")
                                     {
-                                        await WriteDb();
+                                        await _repo.WriteAll(stocks);
                                     }
                                 }
                             }
                             else
                             {
-                                await WriteDb();
+                                await _repo.WriteAll(stocks);
                             }
                             break;
                         case "3":
@@ -113,7 +105,7 @@ namespace Stocker
                         case "5":
                             {
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                await _repo.AddMissingColoumns(stocks);
+                                _repo.AddMissingColoumns(stocks).Wait();
                                 Console.WriteLine("BIST tablosuna yazılıyor");
                                 await _repo.InsertToBIST(stocks);
                                 Console.WriteLine("İşlem tamamlandı");
@@ -122,7 +114,7 @@ namespace Stocker
 
                     }
                     Console.WriteLine("Devam etmek için bir tuşa basınız...");
-                    Console.ReadLine();
+                    Console.ReadKey();
                 }
 
             }

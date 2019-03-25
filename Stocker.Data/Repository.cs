@@ -30,15 +30,26 @@ namespace Stocker.Data
 
         public async Task<StockDto> GetLastRecord()
         {
+            _logger.LogTrace("Bugün kayıt yapılıp yapılmadığını kontrol etmek için son kayıt çekiliyor");
             using (SqlConnection conn = GetOpenConnection())
             {
                 var lastRecord = (await conn.QueryFirstAsync<StockDto>("Select * From Stocks Order By Id Desc"));
+                _logger.LogTrace("Son kayıt çekilde");
+                if (lastRecord.Date.Equals(DateTime.Today))
+                {
+                    _logger.LogTrace("Bugün kayıt çekilmiş");
+                }
+                else
+                {
+                    _logger.LogTrace("Bugün kayıt çekilmemiş");
+                }
                 return lastRecord;
             }
         }
 
         public async Task WriteAll(List<StockDto> list)
         {
+            _logger.LogTrace("Veritabanına yazılıyor...");
             using (SqlConnection conn = GetOpenConnection())
             {
                 using (SqlBulkCopy copy = new SqlBulkCopy(conn))
@@ -66,34 +77,28 @@ namespace Stocker.Data
                     await copy.WriteToServerAsync(table);
                 }
             }
+            _logger.LogTrace("Veritabanına yazılma işlemi tamamlandı.");
         }
 
         public async Task<ServiceResult> InsertToBIST(List<StockDto> list)
         {
-            try
+            var query = new StringBuilder();
+            query.Append("Insert into BIST (");
+            query.Append("StockDate,");
+            query.Append(String.Join(",", list.Select(x => x.StockName).ToList()));
+            query.Append(") Values (");
+            query.Append("GETDATE(),");
+            query.Append(String.Join(",", list.Select(x => x.FinalPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)).ToList()));
+            query.Append(")");
+            using (SqlConnection conn = GetOpenConnection())
             {
-                var query = new StringBuilder();
-                query.Append("Insert into BIST (");
-                query.Append("StockDate,");
-                query.Append(String.Join(",", list.Select(x => x.StockName).ToList()));
-                query.Append(") Values (");
-                query.Append("GETDATE(),");
-                query.Append(String.Join(",", list.Select(x => x.FinalPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)).ToList()));
-                query.Append(")");
-                using (SqlConnection conn = GetOpenConnection())
+                var result = await conn.ExecuteAsync(query.ToString());
+                if (result > 0)
                 {
-                    var result=await conn.ExecuteAsync(query.ToString());
-                    if (result > 0)
-                    {
-                        return new ServiceResult(ServiceStatus.Created);
-                    }
-                    return new ServiceResult(ServiceStatus.NotCreated,"Kayıt yapılmadı");
+                    return new ServiceResult(ServiceStatus.Created);
                 }
+                return new ServiceResult(ServiceStatus.NotCreated, "Kayıt yapılmadı");
             }
-            catch (Exception ex)
-            {
-                return new ServiceResult(ServiceStatus.Error, ex.Message);
-            }        
         }
 
         /// <summary>
@@ -108,7 +113,7 @@ namespace Stocker.Data
             {
                 if (columnNames.Count > 0)
                 {
-                    _logger.LogTrace($"{String.Join(",",columnNames)} stok isimleri tabloya ekleniyor");
+                    _logger.LogTrace($"{String.Join(",", columnNames)} stok isimleri tabloya ekleniyor");
                     int totalAffectedRows = 0;
                     using (SqlConnection conn = GetOpenConnection())
                     {
@@ -122,7 +127,7 @@ namespace Stocker.Data
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(ex,ex.Message);
+                            _logger.LogError(ex, ex.Message);
                             return new ServiceResult(ServiceStatus.Error, ex.Message);
                         }
 
@@ -152,11 +157,15 @@ namespace Stocker.Data
 
         public async Task<ServiceResult> AddMissingColoumns(List<StockDto> stocks)
         {
+            if(stocks==null)
+            {
+                return new ServiceResult(ServiceStatus.Error, "Hisseler çekilmedi");
+            }
             var presentColoums = await GetColumnNamesFromDbAsync("BIST");
             var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "Date" }).ToList();
             var colomnNames = stocks.Select(x => x.StockName);
             var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
-            //Console.WriteLine($"{newColomns.Count} adet yeni kolon eklenecek");   
+            _logger.LogTrace($"{newColomns.Count} adet yeni kolon eklenecek");
             return AddDecimal62ColumnInDb("BIST", newColomns);
         }
 
