@@ -24,51 +24,73 @@ namespace Stocker
             connection.Open();
             return connection;
         }
+
         public async Task<StockDto> GetLastRecord()
         {
             using (SqlConnection conn = GetOpenConnection())
             {
-                var lastRecord= (await conn.QueryFirstAsync<StockDto>("Select * From Stocks Order By Id Desc"));
+                var lastRecord = (await conn.QueryFirstAsync<StockDto>("Select * From Stocks Order By Id Desc"));
                 return lastRecord;
             }
         }
 
         public async Task WriteAll(List<StockDto> list)
-        {   
+        {
             using (SqlConnection conn = GetOpenConnection())
             {
-                await InsertRecordsSqlBulkCopy(conn, list);
+                using (SqlBulkCopy copy = new SqlBulkCopy(conn))
+                {
+                    copy.DestinationTableName = "Stocks";
+                    DataTable table = new DataTable("Stocks");
+                    table.Columns.Add("StockName", typeof(string));
+                    table.Columns.Add("FinalPrice", typeof(decimal));
+                    table.Columns.Add("YesterdayPrice", typeof(decimal));
+                    table.Columns.Add("DailyChange", typeof(decimal));
+                    table.Columns.Add("HighestPrice", typeof(decimal));
+                    table.Columns.Add("LowestPrice", typeof(decimal));
+                    table.Columns.Add("AveragePrice", typeof(decimal));
+                    table.Columns.Add("VolumeLot", typeof(int));
+                    table.Columns.Add("VolumeTL", typeof(int));
+                    table.Columns.Add("Date", typeof(DateTime));
+                    table.Columns.Add("CreatedAt", typeof(DateTime));
+
+                    foreach (var s in list)
+                    {
+                        table.Rows.Add(s.StockName, s.FinalPrice, s.YesterdayPrice, s.DailyChange, s.HighestPrice, s.LowestPrice, s.AveragePrice, s.VolumeLot, s.VolumeTL,
+                            DateTime.Today, DateTime.UtcNow);
+                    }
+
+                    await copy.WriteToServerAsync(table);
+                }
             }
         }
 
-        async Task InsertRecordsSqlBulkCopy(SqlConnection conn, List<StockDto> list)
+        public async Task<ServiceResult> InsertToBIST(List<StockDto> list)
         {
-            using (SqlBulkCopy copy = new SqlBulkCopy(conn))
+            try
             {
-                copy.DestinationTableName = "Stocks";
-                DataTable table = new DataTable("Stocks");
-                table.Columns.Add("StockName", typeof(string));
-                table.Columns.Add("FinalPrice", typeof(decimal));
-                table.Columns.Add("YesterdayPrice", typeof(decimal));
-                table.Columns.Add("DailyChange", typeof(decimal));
-                table.Columns.Add("HighestPrice", typeof(decimal));
-                table.Columns.Add("LowestPrice", typeof(decimal));
-                table.Columns.Add("AveragePrice", typeof(decimal));
-                table.Columns.Add("VolumeLot", typeof(int));
-                table.Columns.Add("VolumeTL", typeof(int));
-                table.Columns.Add("Date", typeof(DateTime));
-                table.Columns.Add("CreatedAt", typeof(DateTime));
-
-                foreach (var s in list)
+                var query = new StringBuilder();
+                query.Append("Insert into BIST (");
+                query.Append("StockDate,");
+                query.Append(String.Join(",", list.Select(x => x.StockName).ToList()));
+                query.Append(") Values (");
+                query.Append("GETDATE(),");
+                query.Append(String.Join(",", list.Select(x => x.FinalPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)).ToList()));
+                query.Append(")");
+                using (SqlConnection conn = GetOpenConnection())
                 {
-                    table.Rows.Add(s.StockName,s.FinalPrice,
-                        s.YesterdayPrice,s.DailyChange,s.HighestPrice,
-                        s.LowestPrice,s.AveragePrice,s.VolumeLot,s.VolumeTL,
-                        DateTime.Today,DateTime.UtcNow);
+                    var result=await conn.ExecuteAsync(query.ToString());
+                    if (result > 0)
+                    {
+                        return new ServiceResult(ServiceStatus.Created);
+                    }
+                    return new ServiceResult(ServiceStatus.NotCreated,"Kayıt yapılmadı");
                 }
-
-                await copy.WriteToServerAsync(table);
             }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ServiceStatus.Error, ex.Message);
+            }        
         }
 
         public ServiceResult AddDecimal62ColumnInDb(string dbName, List<string> columnNames)
@@ -82,25 +104,25 @@ namespace Stocker
                     {
                         //using (var tran = conn.BeginTransaction())
                         //{
-                            try
+                        try
+                        {
+                            foreach (var column in columnNames)
                             {
-                                foreach (var column in columnNames)
-                                {
-                                    var affectedRow = conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(6,2);");
-                                    totalAffectedRows += 1;// affectedRow;
-                                }
+                                var affectedRow = conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(6,2);");
+                                totalAffectedRows += 1;// affectedRow;
                             }
-                            catch (Exception ex)
-                            {
-                                //tran.Rollback();
-                                return new ServiceResult(ServiceStatus.Error, ex.Message);
-                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            //tran.Rollback();
+                            return new ServiceResult(ServiceStatus.Error, ex.Message);
+                        }
 
                         //}
                     }
                     if (totalAffectedRows != columnNames.Count)
                     {
-                        return new ServiceResult(ServiceStatus.Error,"kolon sayısı kadar eklenmedi");
+                        return new ServiceResult(ServiceStatus.Error, "kolon sayısı kadar eklenmedi");
                     }
                 }
             }

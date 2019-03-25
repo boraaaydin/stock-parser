@@ -33,10 +33,11 @@ namespace Stocker
                     Console.WriteLine(stocks == null ? "Stock bilgisi çekilmedi" : "");
                     Console.WriteLine(stocks != null ? "Stocklar mevcut" : "");
                     Console.WriteLine("------------");
-                    Console.WriteLine("0-çıkış");
-                    Console.WriteLine("1-data oku");
-                    Console.WriteLine("2-veritabanına yaz");
-                    Console.WriteLine("3-BIST veritabanına olmayan kolonları ekle");
+                    Console.WriteLine("0-Çıkış");
+                    Console.WriteLine("1-Data oku");
+                    Console.WriteLine("2-STOCK tablosuna kaydet");
+                    Console.WriteLine("3-BIST tablosuna olmayan kolonları ekle");
+                    Console.WriteLine("4-BIST tablosuna kaydet");
                     Console.WriteLine("------------");
                     Console.WriteLine("Seçiminizi yapınız...");
                     string secim = Console.ReadLine();
@@ -98,6 +99,20 @@ namespace Stocker
                                     Console.WriteLine("Yeni kolonlar eklendi");
                                 }
                                 Console.WriteLine("Kolonlar eklenemedi: " + result.Message);
+                                break;
+                            }
+                        case "4":
+                            {
+                                Console.WriteLine("BIST tablosuna yazılıyor");
+                                var result = await repo.InsertToBIST(stocks);
+                                if (result.Status != ServiceStatus.Created)
+                                {
+                                    Console.WriteLine("hata: " + result.Message);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Başarıyla kaydedildi");
+                                }
                                 break;
                             }
 
