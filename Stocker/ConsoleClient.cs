@@ -1,4 +1,5 @@
-﻿using Stocker.Data;
+﻿using Microsoft.Extensions.Logging;
+using Stocker.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +9,19 @@ namespace Stocker
 {
     public class ConsoleClient
     {
-        public ConsoleClient()
+        public ConsoleClient(Repository repo, ILogger<ConsoleClient> logger)
         {
-            repo = new Repository();
+            _repo = repo;
+            _logger = logger;
         }
         private List<StockDto> stocks;
-        private Repository repo;
+        private Repository _repo;
+        private ILogger<ConsoleClient> _logger;
 
         async Task WriteDb()
         {
             Console.WriteLine("Veritabanına yazılıyor...");
-            await repo.WriteAll(stocks);
+            await _repo.WriteAll(stocks);
             Console.WriteLine("Veritabanına yazılma işlemi tamamlandı.");
         }
 
@@ -36,8 +39,9 @@ namespace Stocker
                     Console.WriteLine("0-Çıkış");
                     Console.WriteLine("1-Data oku");
                     Console.WriteLine("2-STOCK tablosuna kaydet");
-                    Console.WriteLine("3-BIST tablosuna olmayan kolonları ekle");
-                    Console.WriteLine("4-BIST tablosuna kaydet");
+                    Console.WriteLine("3-BIST kolonları ekle");
+                    Console.WriteLine("4-BIST kayıtları ekle");
+                    Console.WriteLine("5-BIST kolonları ekle ve kayıtları ekle");
                     Console.WriteLine("------------");
                     Console.WriteLine("Seçiminizi yapınız...");
                     string secim = Console.ReadLine();
@@ -62,7 +66,7 @@ namespace Stocker
                                 Console.WriteLine("Stock bilgisi bulanamadı");
                                 break;
                             }
-                            var lastRecord = await repo.GetLastRecord();
+                            var lastRecord = await _repo.GetLastRecord();
                             if (lastRecord != null)
                             {
                                 if (lastRecord.Date != DateTime.Today)
@@ -88,23 +92,14 @@ namespace Stocker
                         case "3":
                             {
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                var presentColoums = await repo.GetColomnNamesFromDbAsync("BIST");
-                                var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "Date" }).ToList();
-                                var colomnNames = stocks.Select(x => x.StockName);
-                                var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
-                                Console.WriteLine($"{newColomns.Count} adet yeni kolon eklenecek");
-                                var result = repo.AddDecimal62ColumnInDb("BIST", newColomns);
-                                if (result.Status == ServiceStatus.Created)
-                                {
-                                    Console.WriteLine("Yeni kolonlar eklendi");
-                                }
+                                var result= await _repo.AddMissingColoumns(stocks);
                                 Console.WriteLine("Kolonlar eklenemedi: " + result.Message);
                                 break;
                             }
                         case "4":
                             {
                                 Console.WriteLine("BIST tablosuna yazılıyor");
-                                var result = await repo.InsertToBIST(stocks);
+                                var result = await _repo.InsertToBIST(stocks);
                                 if (result.Status != ServiceStatus.Created)
                                 {
                                     Console.WriteLine("hata: " + result.Message);
@@ -113,6 +108,15 @@ namespace Stocker
                                 {
                                     Console.WriteLine("Başarıyla kaydedildi");
                                 }
+                                break;
+                            }
+                        case "5":
+                            {
+                                Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
+                                await _repo.AddMissingColoumns(stocks);
+                                Console.WriteLine("BIST tablosuna yazılıyor");
+                                await _repo.InsertToBIST(stocks);
+                                Console.WriteLine("İşlem tamamlandı");
                                 break;
                             }
 

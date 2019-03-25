@@ -13,7 +13,8 @@ namespace Stocker.Data
         public async Task<List<StockDto>> GetData()
         {
             var mainUrl = "http://push.bigpara.com/borsa/hisse-fiyatlari/";
-            var harflist = new List<string> { "A", "B", "C", "D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Y","Z" };
+            var harflist = new List<string> { "A","B" ,"C"};
+            //var harflist = new List<string> { "A", "B", "C", "D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Y","Z" };
             var taskList = new List<Task<List<StockDto>>>();
             foreach(var harf in harflist)
             {

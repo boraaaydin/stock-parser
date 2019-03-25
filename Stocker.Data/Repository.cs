@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Logging;
 using Stocker.Data;
 using System;
 using System.Collections.Generic;
@@ -8,15 +9,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stocker
+namespace Stocker.Data
 {
     public class Repository
     {
         private string connString;
+        private ILogger<Repository> _logger;
 
-        public Repository()
+        public Repository(ILogger<Repository> logger)
         {
             connString = "Server=.;Database=Stocks;Trusted_Connection=True;";
+            _logger = logger;
         }
         protected SqlConnection GetOpenConnection()
         {
@@ -93,17 +96,22 @@ namespace Stocker
             }        
         }
 
+        /// <summary>
+        /// Returns Ok if Success
+        /// </summary>
+        /// <param name="dbName"></param>
+        /// <param name="columnNames"></param>
+        /// <returns></returns>
         public ServiceResult AddDecimal62ColumnInDb(string dbName, List<string> columnNames)
         {
             if (columnNames != null)
             {
                 if (columnNames.Count > 0)
                 {
+                    _logger.LogTrace($"{String.Join(",",columnNames)} stok isimleri tabloya ekleniyor");
                     int totalAffectedRows = 0;
                     using (SqlConnection conn = GetOpenConnection())
                     {
-                        //using (var tran = conn.BeginTransaction())
-                        //{
                         try
                         {
                             foreach (var column in columnNames)
@@ -114,30 +122,43 @@ namespace Stocker
                         }
                         catch (Exception ex)
                         {
-                            //tran.Rollback();
+                            _logger.LogError(ex,ex.Message);
                             return new ServiceResult(ServiceStatus.Error, ex.Message);
                         }
 
-                        //}
                     }
                     if (totalAffectedRows != columnNames.Count)
                     {
-                        return new ServiceResult(ServiceStatus.Error, "kolon sayısı kadar eklenmedi");
+                        var errorMessage = "kolon sayısı kadar eklenmedi";
+                        _logger.LogError(errorMessage);
+                        return new ServiceResult(ServiceStatus.Error, errorMessage);
                     }
                 }
+                _logger.LogTrace("Kayıtlar eklendi");
             }
-            return new ServiceResult(ServiceStatus.Created);
+            return new ServiceResult(ServiceStatus.Ok);
         }
 
-        public async Task<List<string>> GetColomnNamesFromDbAsync(string dbName)
+        public async Task<List<string>> GetColumnNamesFromDbAsync(string dbName)
         {
+            _logger.LogTrace("Kayıtlı stok isimleri ekleniyor");
             using (SqlConnection conn = GetOpenConnection())
             {
                 var result = (await conn.QueryAsync<string>($"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dbName}'")).ToList();
+                _logger.LogTrace($"{result.Count} kayıt bulundu.");
                 return result;
             }
         }
 
+        public async Task<ServiceResult> AddMissingColoumns(List<StockDto> stocks)
+        {
+            var presentColoums = await GetColumnNamesFromDbAsync("BIST");
+            var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "Date" }).ToList();
+            var colomnNames = stocks.Select(x => x.StockName);
+            var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
+            //Console.WriteLine($"{newColomns.Count} adet yeni kolon eklenecek");   
+            return AddDecimal62ColumnInDb("BIST", newColomns);
+        }
 
     }
 }
