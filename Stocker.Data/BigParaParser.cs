@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,17 @@ namespace Stocker.Data
 {
     public class BigParaParser:IParser
     {
+        private ILogger<BigParaParser> _logger;
+
+        public BigParaParser(ILogger<BigParaParser> logger)
+        {
+            _logger = logger;
+        }
         public async Task<List<StockDto>> GetData()
         {
             var mainUrl = "http://push.bigpara.com/borsa/hisse-fiyatlari/";
-            var harflist = new List<string> { "A","B" ,"C"};
-            //var harflist = new List<string> { "A", "B", "C", "D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Y","Z" };
+            //var harflist = new List<string> { "A","B" ,"C","D", "E" };
+            var harflist = new List<string> { "A", "B", "C", "D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Y","Z" };
             var taskList = new List<Task<List<StockDto>>>();
             foreach(var harf in harflist)
             {
@@ -31,10 +38,10 @@ namespace Stocker.Data
             {
                 var stocks=await task;
                 bulkStockList.AddRange(stocks);
-                Console.WriteLine( $"{harflist[index]} ile başlayan {stocks.Count} hisse eklendi");
+                _logger.LogTrace( $"{harflist[index]} ile başlayan {stocks.Count} hisse eklendi");
                 index++;
             }
-            Console.WriteLine($"Toplam {bulkStockList.Count} hisse çekildi");
+            _logger.LogTrace($"Toplam {bulkStockList.Count} hisse çekildi");
             return bulkStockList;
         }
         public async Task<List<StockDto>> GetDataPerPage(Uri url)

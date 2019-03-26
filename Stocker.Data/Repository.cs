@@ -28,7 +28,7 @@ namespace Stocker.Data
             return connection;
         }
 
-        public async Task<StockDto> GetLastRecord()
+        public async Task<StockDto> GetLastRecordFromStocks()
         {
             _logger.LogTrace("Bugün kayıt yapılıp yapılmadığını kontrol etmek için son kayıt çekiliyor");
             using (SqlConnection conn = GetOpenConnection())
@@ -47,7 +47,7 @@ namespace Stocker.Data
             }
         }
 
-        public async Task WriteAll(List<StockDto> list)
+        public async Task AddToStocks(List<StockDto> list)
         {
             _logger.LogTrace("Veritabanına yazılıyor...");
             using (SqlConnection conn = GetOpenConnection())
@@ -102,12 +102,13 @@ namespace Stocker.Data
         }
 
         /// <summary>
-        /// Returns Ok if Success
+        /// Returns Created if Success
+        /// Mesajında oluşturulan hisseleri döner
         /// </summary>
         /// <param name="dbName"></param>
         /// <param name="columnNames"></param>
         /// <returns></returns>
-        public ServiceResult AddDecimal62ColumnInDb(string dbName, List<string> columnNames)
+        public async Task<ServiceResult> AddDecimal62ColumnInDb(string dbName, List<string> columnNames)
         {
             if (columnNames != null)
             {
@@ -121,7 +122,7 @@ namespace Stocker.Data
                         {
                             foreach (var column in columnNames)
                             {
-                                var affectedRow = conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(6,2);");
+                                var affectedRow = await conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(6,2);");
                                 totalAffectedRows += 1;// affectedRow;
                             }
                         }
@@ -130,7 +131,6 @@ namespace Stocker.Data
                             _logger.LogError(ex, ex.Message);
                             return new ServiceResult(ServiceStatus.Error, ex.Message);
                         }
-
                     }
                     if (totalAffectedRows != columnNames.Count)
                     {
@@ -138,10 +138,16 @@ namespace Stocker.Data
                         _logger.LogError(errorMessage);
                         return new ServiceResult(ServiceStatus.Error, errorMessage);
                     }
+
+                    _logger.LogTrace("Kayıtlar eklendi");
+                    return new ServiceResult(ServiceStatus.Created, string.Join(", ", columnNames));
                 }
-                _logger.LogTrace("Kayıtlar eklendi");
+                else
+                {
+                    return new ServiceResult(ServiceStatus.NotCreated, "liste boş geldi");
+                }
             }
-            return new ServiceResult(ServiceStatus.Ok);
+            return new ServiceResult(ServiceStatus.NotCreated, "liste null geldi");
         }
 
         public async Task<List<string>> GetColumnNamesFromDbAsync(string dbName)
@@ -161,12 +167,13 @@ namespace Stocker.Data
             {
                 return new ServiceResult(ServiceStatus.Error, "Hisseler çekilmedi");
             }
-            var presentColoums = await GetColumnNamesFromDbAsync("BIST");
-            var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "Date" }).ToList();
+            var presentColoums = GetColumnNamesFromDbAsync("BIST").Result;
+            var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "StockDate" }).ToList();
             var colomnNames = stocks.Select(x => x.StockName);
             var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
+            Console.WriteLine($"{newColomns.Count} adet yeni kolon eklenecek");
             _logger.LogTrace($"{newColomns.Count} adet yeni kolon eklenecek");
-            return AddDecimal62ColumnInDb("BIST", newColomns);
+            return AddDecimal62ColumnInDb("BIST", newColomns).Result;
         }
 
     }

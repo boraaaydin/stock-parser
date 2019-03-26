@@ -36,7 +36,7 @@ namespace Stocker
                     Console.WriteLine("2-STOCK tablosuna kaydet");
                     Console.WriteLine("3-BIST eksik kolonları ekle");
                     Console.WriteLine("4-BIST kayıtları kaydet");
-                    Console.WriteLine("5-BIST eksik kolonları ekle ve kayıtları kaydet");
+                    Console.WriteLine("5-Eksik kolonları ekle ve kayıtları kaydet");
                     Console.WriteLine("------------");
                     Console.WriteLine("Seçiminizi yapınız...");
                     string secim = Console.ReadLine();
@@ -58,12 +58,12 @@ namespace Stocker
                                 Console.WriteLine("Stock bilgisi bulanamadı");
                                 break;
                             }
-                            var lastRecord = await _repo.GetLastRecord();
+                            var lastRecord = await _repo.GetLastRecordFromStocks();
                             if (lastRecord != null)
                             {
                                 if (lastRecord.Date != DateTime.Today)
                                 {
-                                    await _repo.WriteAll(stocks);
+                                    await _repo.AddToStocks(stocks);
                                 }
                                 else
                                 {
@@ -72,13 +72,13 @@ namespace Stocker
                                     var result = Console.ReadLine();
                                     if (result.ToLower() == "e")
                                     {
-                                        await _repo.WriteAll(stocks);
+                                        await _repo.AddToStocks(stocks);
                                     }
                                 }
                             }
                             else
                             {
-                                await _repo.WriteAll(stocks);
+                                await _repo.AddToStocks(stocks);
                             }
                             break;
                         case "3":
@@ -104,12 +104,33 @@ namespace Stocker
                             }
                         case "5":
                             {
+                                stocks = _parser.GetData().Result;
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                _repo.AddMissingColoumns(stocks).Wait();
-                                Console.WriteLine("BIST tablosuna yazılıyor");
-                                await _repo.InsertToBIST(stocks);
-                                Console.WriteLine("İşlem tamamlandı");
-                                break;
+                                var result=_repo.AddMissingColoumns(stocks).Result;
+                                if (result.Status == ServiceStatus.Ok)
+                                {
+                                    Console.WriteLine("Eklenen hisseler:" + result.Message);
+                                }
+                                else
+                                {
+                                    Console.WriteLine(result.Message);
+                                }
+                                Console.WriteLine("Stok tablosundan son kayıt çekiliyor");
+                                lastRecord = _repo.GetLastRecordFromStocks().Result;
+                                if (lastRecord != null)
+                                {
+                                    if (lastRecord.Date != DateTime.Today)
+                                    {
+                                        Console.WriteLine("Bugün için kayıtlar eklenmemiş, ekleniyor...");
+                                        _repo.AddToStocks(stocks).Wait();
+                                        Console.WriteLine("Stok tablosuna kayıtlar eklendi");
+
+                                        Console.WriteLine("BIST tablosuna yazılıyor");
+                                        _repo.InsertToBIST(stocks).Wait();
+                                        Console.WriteLine("BIST tablosuna kayıtlar eklendi");
+                                    }
+                                }
+                            break;
                             }
 
                     }
