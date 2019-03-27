@@ -13,8 +13,8 @@ namespace Stocker.Data
         public decimal HighestPrice { get; set; }
         public decimal LowestPrice { get; set; }
         public decimal AveragePrice { get; set; }
-        public decimal VolumeLot { get; set; }
-        public decimal VolumeTL { get; set; }
+        public long VolumeLot { get; set; }
+        public long VolumeTL { get; set; }
         public DateTime Date { get; set; }
         public DateTime CreatedAt { get; set; }
 

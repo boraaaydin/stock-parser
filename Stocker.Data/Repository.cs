@@ -63,8 +63,8 @@ namespace Stocker.Data
                     table.Columns.Add("HighestPrice", typeof(decimal));
                     table.Columns.Add("LowestPrice", typeof(decimal));
                     table.Columns.Add("AveragePrice", typeof(decimal));
-                    table.Columns.Add("VolumeLot", typeof(int));
-                    table.Columns.Add("VolumeTL", typeof(int));
+                    table.Columns.Add("VolumeLot", typeof(long));
+                    table.Columns.Add("VolumeTL", typeof(long));
                     table.Columns.Add("Date", typeof(DateTime));
                     table.Columns.Add("CreatedAt", typeof(DateTime));
 

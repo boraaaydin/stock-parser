@@ -70,11 +70,10 @@ namespace Stocker.Data
                     list.Add(coloum.InnerHtml);
 
                 }
-                    var numbers=new List<decimal>();
+                var numbers=new List<decimal>();
                 foreach(var a in list)
                 {
-                    var b = a.Replace(@"\r\n", "").Trim();
-                    if(Decimal.TryParse(b, out var dec))
+                    if(Decimal.TryParse(a.Replace(@"\r\n", "").Trim(), out var dec))
                     {
                         numbers.Add(dec);
                     }
@@ -85,8 +84,15 @@ namespace Stocker.Data
                 stock.HighestPrice= numbers[3];
                 stock.LowestPrice= numbers[4];
                 stock.AveragePrice= numbers[5];
-                stock.VolumeLot= numbers[6];
-                stock.VolumeTL= numbers[7];
+
+                if (long.TryParse(list[7].Replace(".",""), out long lot))
+                {
+                    stock.VolumeLot = lot;
+                }
+                if (long.TryParse(list[8].Replace(".", ""), out long tl))
+                {
+                    stock.VolumeTL = tl;
+                }
                 stockList.Add(stock);
             }
 
