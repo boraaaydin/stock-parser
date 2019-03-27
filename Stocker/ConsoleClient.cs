@@ -84,7 +84,7 @@ namespace Stocker
                         case "3":
                             {
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                var result= await _repo.AddMissingColoumns(stocks);
+                                var result = await _repo.AddMissingColoumns(stocks);
                                 Console.WriteLine("Kolonlar eklenemedi: " + result.Message);
                                 break;
                             }
@@ -106,7 +106,7 @@ namespace Stocker
                             {
                                 stocks = _parser.GetData().Result;
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                var result=_repo.AddMissingColoumns(stocks).Result;
+                                var result = _repo.AddMissingColoumns(stocks).Result;
                                 if (result.Status == ServiceStatus.Ok)
                                 {
                                     Console.WriteLine("Eklenen hisseler:" + result.Message);
@@ -117,20 +117,18 @@ namespace Stocker
                                 }
                                 Console.WriteLine("Stok tablosundan son kayıt çekiliyor");
                                 lastRecord = _repo.GetLastRecordFromStocks().Result;
-                                if (lastRecord != null)
+                                if (lastRecord != null && lastRecord.Date != DateTime.Today ||
+                                    lastRecord == null)
                                 {
-                                    if (lastRecord.Date != DateTime.Today)
-                                    {
-                                        Console.WriteLine("Bugün için kayıtlar eklenmemiş, ekleniyor...");
-                                        _repo.AddToStocks(stocks).Wait();
-                                        Console.WriteLine("Stok tablosuna kayıtlar eklendi");
+                                    Console.WriteLine("Bugün için kayıtlar eklenmemiş, ekleniyor...");
+                                    _repo.AddToStocks(stocks).Wait();
+                                    Console.WriteLine("Stok tablosuna kayıtlar eklendi");
 
-                                        Console.WriteLine("BIST tablosuna yazılıyor");
-                                        _repo.InsertToBIST(stocks).Wait();
-                                        Console.WriteLine("BIST tablosuna kayıtlar eklendi");
-                                    }
+                                    Console.WriteLine("BIST tablosuna yazılıyor");
+                                    _repo.InsertToBIST(stocks).Wait();
+                                    Console.WriteLine("BIST tablosuna kayıtlar eklendi");
                                 }
-                            break;
+                                break;
                             }
 
                     }

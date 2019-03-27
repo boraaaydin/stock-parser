@@ -33,8 +33,12 @@ namespace Stocker.Data
             _logger.LogTrace("Bugün kayıt yapılıp yapılmadığını kontrol etmek için son kayıt çekiliyor");
             using (SqlConnection conn = GetOpenConnection())
             {
-                var lastRecord = (await conn.QueryFirstAsync<StockDto>("Select * From Stocks Order By Id Desc"));
+                var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select * From Stocks Order By Id Desc"));
                 _logger.LogTrace("Son kayıt çekilde");
+                if (lastRecord == null)
+                {
+                    return null;
+                }
                 if (lastRecord.Date.Equals(DateTime.Today))
                 {
                     _logger.LogTrace("Bugün kayıt çekilmiş");
@@ -73,8 +77,10 @@ namespace Stocker.Data
                         table.Rows.Add(s.StockName, s.FinalPrice, s.YesterdayPrice, s.DailyChange, s.HighestPrice, s.LowestPrice, s.AveragePrice, s.VolumeLot, s.VolumeTL,
                             DateTime.Today, DateTime.UtcNow);
                     }
-
-                    await copy.WriteToServerAsync(table);
+                    if (table.Rows.Count > 0)
+                    {
+                        await copy.WriteToServerAsync(table);
+                    }
                 }
             }
             _logger.LogTrace("Veritabanına yazılma işlemi tamamlandı.");
