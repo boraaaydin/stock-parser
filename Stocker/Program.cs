@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Stocker.Data;
+using Stocker.Data.Repository;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +13,8 @@ namespace Stocker
         {
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
-                .AddSingleton<Repository>()
+                .AddSingleton<StockRepository>()
+                .AddSingleton<BistRepository>()
                 .AddSingleton<ConsoleClient>()
                 .AddSingleton<IParser, BigParaParser>()
                 .BuildServiceProvider();

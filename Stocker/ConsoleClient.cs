@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Stocker.Data;
+using Stocker.Data.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,22 @@ namespace Stocker
 {
     public class ConsoleClient
     {
-        public ConsoleClient(Repository repo, ILogger<ConsoleClient> logger, IParser parser)
+        public ConsoleClient(
+            ILogger<ConsoleClient> logger, 
+            IParser parser,
+            BistRepository bistRepo,
+            StockRepository stockRepo)
         {
-            _repo = repo;
+            _stockRepo = stockRepo;
             _logger = logger;
             _parser = parser;
+            _bistRepo = bistRepo;
         }
         private List<StockDto> stocks;
-        private Repository _repo;
+        private StockRepository _stockRepo;
         private ILogger<ConsoleClient> _logger;
         private IParser _parser;
+        private BistRepository _bistRepo;
 
         public async Task Run()
         {
@@ -36,7 +43,8 @@ namespace Stocker
                     Console.WriteLine("2-STOCK tablosuna kaydet");
                     Console.WriteLine("3-BIST eksik kolonları ekle");
                     Console.WriteLine("4-BIST kayıtları kaydet");
-                    Console.WriteLine("5-Eksik kolonları ekle ve kayıtları kaydet");
+                    Console.WriteLine("5-BIST son kayıdı çek");
+                    Console.WriteLine("9-TÜMÜNÜ KAYDET");
                     Console.WriteLine("------------");
                     Console.WriteLine("Seçiminizi yapınız...");
                     string secim = Console.ReadLine();
@@ -58,12 +66,12 @@ namespace Stocker
                                 Console.WriteLine("Stock bilgisi bulanamadı");
                                 break;
                             }
-                            var lastRecord = await _repo.GetLastRecordFromStocks();
+                            var lastRecord = await _stockRepo.GetLastRecordFromStocks();
                             if (lastRecord != null)
                             {
                                 if (lastRecord.Date != DateTime.Today)
                                 {
-                                    await _repo.AddToStocks(stocks);
+                                    await _stockRepo.AddToStocks(stocks);
                                 }
                                 else
                                 {
@@ -72,26 +80,26 @@ namespace Stocker
                                     var result = Console.ReadLine();
                                     if (result.ToLower() == "e")
                                     {
-                                        await _repo.AddToStocks(stocks);
+                                        await _stockRepo.AddToStocks(stocks);
                                     }
                                 }
                             }
                             else
                             {
-                                await _repo.AddToStocks(stocks);
+                                await _stockRepo.AddToStocks(stocks);
                             }
                             break;
                         case "3":
                             {
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                var result = await _repo.AddMissingColoumns(stocks);
+                                var result = await _bistRepo.AddMissingColoumns(stocks);
                                 Console.WriteLine("Kolonlar eklenemedi: " + result.Message);
                                 break;
                             }
                         case "4":
                             {
                                 Console.WriteLine("BIST tablosuna yazılıyor");
-                                var result = await _repo.InsertToBIST(stocks);
+                                var result = await _bistRepo.InsertToBIST(stocks);
                                 if (result.Status != ServiceStatus.Created)
                                 {
                                     Console.WriteLine("hata: " + result.Message);
@@ -102,11 +110,11 @@ namespace Stocker
                                 }
                                 break;
                             }
-                        case "5":
+                        case "9":
                             {
                                 stocks = _parser.GetData().Result;
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                var result = _repo.AddMissingColoumns(stocks).Result;
+                                var result = _bistRepo.AddMissingColoumns(stocks).Result;
                                 if (result.Status == ServiceStatus.Ok)
                                 {
                                     Console.WriteLine("Eklenen hisseler:" + result.Message);
@@ -116,16 +124,20 @@ namespace Stocker
                                     Console.WriteLine(result.Message);
                                 }
                                 Console.WriteLine("Stok tablosundan son kayıt çekiliyor");
-                                lastRecord = _repo.GetLastRecordFromStocks().Result;
+                                lastRecord = _stockRepo.GetLastRecordFromStocks().Result;
                                 if (lastRecord != null && lastRecord.Date != DateTime.Today ||
                                     lastRecord == null)
                                 {
-                                    Console.WriteLine("Bugün için kayıtlar eklenmemiş, ekleniyor...");
-                                    _repo.AddToStocks(stocks).Wait();
+                                    Console.WriteLine("Stok tablosuna bugün için kayıtlar eklenmemiş, ekleniyor...");
+                                    _stockRepo.AddToStocks(stocks).Wait();
                                     Console.WriteLine("Stok tablosuna kayıtlar eklendi");
-
+                                }
+                                var lastBistRecord = _bistRepo.GetLastRecordFromStocks().Result;
+                                if (lastBistRecord != null && lastBistRecord.Date != DateTime.Today ||
+                                    lastBistRecord == null)
+                                {
                                     Console.WriteLine("BIST tablosuna yazılıyor");
-                                    _repo.InsertToBIST(stocks).Wait();
+                                    _bistRepo.InsertToBIST(stocks).Wait();
                                     Console.WriteLine("BIST tablosuna kayıtlar eklendi");
                                 }
                                 break;
