@@ -22,7 +22,7 @@ namespace Stocker.Data.Repository
             _logger.LogTrace("Bugün kayıt yapılıp yapılmadığını kontrol etmek için son kayıt çekiliyor");
             using (SqlConnection conn = GetOpenConnection())
             {
-                var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From BIST Order By Id Desc"));
+                var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Bist Order By Id Desc"));
                 _logger.LogTrace("Son kayıt çekildi");
                 if (lastRecord == null)
                 {
@@ -43,7 +43,7 @@ namespace Stocker.Data.Repository
         public async Task<ServiceResult> InsertToBIST(List<StockDto> list)
         {
             var query = new StringBuilder();
-            query.Append("Insert into BIST (");
+            query.Append("Insert into Bist (");
             query.Append("StockDate,");
             query.Append(String.Join(",", list.Select(x => x.StockName).ToList()));
             query.Append(") Values (");
@@ -67,13 +67,13 @@ namespace Stocker.Data.Repository
             {
                 return new ServiceResult(ServiceStatus.Error, "Hisseler çekilmedi");
             }
-            var presentColoums = GetColumnNamesFromDbAsync("BIST").Result;
+            var presentColoums = GetColumnNamesFromDbAsync("Bist").Result;
             var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "StockDate" }).ToList();
             var colomnNames = stocks.Select(x => x.StockName);
             var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
             Console.WriteLine($"{newColomns.Count} adet yeni kolon eklenecek");
             _logger.LogTrace($"{newColomns.Count} adet yeni kolon eklenecek");
-            return AddDecimal62ColumnInDb("BIST", newColomns).Result;
+            return AddDecimal62ColumnInDb("Bist", newColomns).Result;
         }
 
         public async Task<List<string>> GetColumnNamesFromDbAsync(string dbName)
@@ -108,7 +108,7 @@ namespace Stocker.Data.Repository
                         {
                             foreach (var column in columnNames)
                             {
-                                var affectedRow = await conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(6,2);");
+                                var affectedRow = await conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(8,2);");
                                 totalAffectedRows += 1;// affectedRow;
                             }
                         }
