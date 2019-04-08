@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stocker.Data
+namespace StockParser.Data
 {
     public interface IParser
     {

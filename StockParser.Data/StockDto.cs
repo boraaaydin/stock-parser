@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Stocker.Data
+namespace StockParser.Data
 {
     public class StockDto
     {

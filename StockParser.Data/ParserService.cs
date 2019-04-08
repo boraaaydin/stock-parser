@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Stocker.Data.Repository;
+using StockParser.Data.Repository;
 using System;
 
-namespace Stocker.Data
+namespace StockParser.Data
 {
     public class ParserService
     {

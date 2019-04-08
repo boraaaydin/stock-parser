@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Stocker.Data;
-using Stocker.Data.Repository;
+using StockParser.Data;
+using StockParser.Data.Repository;
 using System;
 using System.Collections.Generic;
 
-namespace Stocker
+namespace StockParser.ConsoleClient
 {
     class Program
     {

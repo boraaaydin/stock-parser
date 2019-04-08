@@ -7,7 +7,7 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Stocker.Data\Stocker.Data.csproj" />
+    <ProjectReference Include="..\..\StockParser.Data\StockParser.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

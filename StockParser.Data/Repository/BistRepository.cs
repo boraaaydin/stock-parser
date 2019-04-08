@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stocker.Data.Repository
+namespace StockParser.Data.Repository
 {
     public class BistRepository : BaseRepository
     {

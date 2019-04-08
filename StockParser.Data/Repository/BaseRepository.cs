@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
 
-namespace Stocker.Data.Repository
+namespace StockParser.Data.Repository
 {
     public class BaseRepository
     {

@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using Stocker.Data;
-using Stocker.Data.Repository;
-using System;
+﻿using System;
+using Microsoft.Extensions.Logging;
+using StockParser.Data;
+using StockParser.Data.Repository;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stocker
+namespace StockParser.ConsoleClient
 {
     public class ConsoleClient
     {

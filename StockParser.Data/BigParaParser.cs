@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Stocker.Data
+namespace StockParser.Data
 {
     public class BigParaParser:IParser
     {
