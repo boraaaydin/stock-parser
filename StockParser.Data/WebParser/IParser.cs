@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockParser.Data
+namespace StockParser.Data.WebParser
 {
     public interface IParser
     {

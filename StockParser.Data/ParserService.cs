@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using StockParser.Data.Repository;
+using StockParser.Data.WebParser;
 using System;
 
 namespace StockParser.Data
