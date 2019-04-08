@@ -61,7 +61,7 @@ namespace Stocker.Data.Repository
             }
         }
 
-        public async Task<ServiceResult> AddMissingColoumns(List<StockDto> stocks)
+        public async Task<ServiceResult> AddMissingColumns(List<StockDto> stocks)
         {
             if (stocks == null)
             {
@@ -73,7 +73,7 @@ namespace Stocker.Data.Repository
             var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
             Console.WriteLine($"{newColomns.Count} adet yeni kolon eklenecek");
             _logger.LogTrace($"{newColomns.Count} adet yeni kolon eklenecek");
-            return AddDecimal62ColumnInDb("Bist", newColomns).Result;
+            return AddDecimalColumnInDb("Bist", newColomns).Result;
         }
 
         public async Task<List<string>> GetColumnNamesFromDbAsync(string dbName)
@@ -94,7 +94,7 @@ namespace Stocker.Data.Repository
         /// <param name="dbName"></param>
         /// <param name="columnNames"></param>
         /// <returns></returns>
-        public async Task<ServiceResult> AddDecimal62ColumnInDb(string dbName, List<string> columnNames)
+        public async Task<ServiceResult> AddDecimalColumnInDb(string dbName, List<string> columnNames)
         {
             if (columnNames != null)
             {

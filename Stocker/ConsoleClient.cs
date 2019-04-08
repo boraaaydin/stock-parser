@@ -92,7 +92,7 @@ namespace Stocker
                         case "3":
                             {
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                var result = await _bistRepo.AddMissingColoumns(stocks);
+                                var result = await _bistRepo.AddMissingColumns(stocks);
                                 Console.WriteLine("Kolonlar eklenemedi: " + result.Message);
                                 break;
                             }
@@ -114,7 +114,7 @@ namespace Stocker
                             {
                                 stocks = _parser.GetData().Result;
                                 Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
-                                var result = _bistRepo.AddMissingColoumns(stocks).Result;
+                                var result = _bistRepo.AddMissingColumns(stocks).Result;
                                 if (result.Status == ServiceStatus.Ok)
                                 {
                                     Console.WriteLine("Eklenen hisseler:" + result.Message);

@@ -26,7 +26,7 @@ namespace Stocker.Data.Repository
             using (SqlConnection conn = GetOpenConnection())
             {
                 var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Stocks Order By Id Desc"));
-                _logger.LogTrace("Son kayıt çekilde");
+                _logger.LogTrace("Son kayıt çekildi");
                 if (lastRecord == null)
                 {
                     return null;
