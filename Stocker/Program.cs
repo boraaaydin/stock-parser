@@ -16,6 +16,7 @@ namespace Stocker
                 .AddSingleton<StockRepository>()
                 .AddSingleton<BistRepository>()
                 .AddSingleton<ConsoleClient>()
+                .AddSingleton<ParserService>()
                 .AddSingleton<IParser, BigParaParser>()
                 .BuildServiceProvider();
 
