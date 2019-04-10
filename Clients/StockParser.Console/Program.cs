@@ -2,8 +2,7 @@
 using Microsoft.Extensions.Logging;
 using StockParser.Data;
 using StockParser.Data.Repository;
-using System;
-using System.Collections.Generic;
+using StockParser.Data.WebParser;
 
 namespace StockParser.ConsoleClient
 {
