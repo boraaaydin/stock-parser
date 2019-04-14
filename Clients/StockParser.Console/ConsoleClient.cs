@@ -5,6 +5,7 @@ using StockParser.Data.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StockParser.Data.WebParser;
+using System.Configuration;
 
 namespace StockParser.ConsoleClient
 {
@@ -32,6 +33,7 @@ namespace StockParser.ConsoleClient
 
         public async Task Run()
         {
+            
             try
             {
                 bool returnBack = true;
@@ -42,12 +44,12 @@ namespace StockParser.ConsoleClient
                     Console.WriteLine(stocks != null ? "Stocks are present" : "");
                     Console.WriteLine("------------");
                     Console.WriteLine("0-Exit");
-                    Console.WriteLine("1-Parse Stocks");
-                    Console.WriteLine("2-Insert stocks to STOCK table");
+                    Console.WriteLine("1-Parse Stocks from Web");
+                    Console.WriteLine("2-Insert stocks to STOCKS table");
                     Console.WriteLine("3-Add missing colums to BIST table");
                     Console.WriteLine("4-Insert stocks to BIST table");
-                    Console.WriteLine("5-Get last row from BIST table");
-                    Console.WriteLine("9-Insert all stocks to BIST and STOCK tables");
+                    Console.WriteLine("5-Get last row from STOCKS table");
+                    Console.WriteLine("9-Insert all stocks to BIST and STOCKS tables");
                     Console.WriteLine("------------");
                     Console.WriteLine("Make your choise...");
                     var choice = Console.ReadLine();
@@ -109,6 +111,27 @@ namespace StockParser.ConsoleClient
                                 else
                                 {
                                     Console.WriteLine("Inserted with Success");
+                                }
+                                break;
+                            }
+                        case "5":
+                            {
+                                Console.WriteLine("Getting last row from STOCKS table");
+                                lastRecord = await _stockRepo.GetLastRecordFromStocks();
+                                if (lastRecord == null)
+                                {
+                                    Console.WriteLine("Last record received null");
+                                }
+                                else
+                                {
+                                    if (lastRecord.Date.Equals(DateTime.Today))
+                                    {
+                                        Console.WriteLine("Find record for today");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("There is not any record for today");
+                                    }
                                 }
                                 break;
                             }

@@ -1,12 +1,9 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
-using StockParser.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StockParser.Data.Repository
@@ -15,7 +12,7 @@ namespace StockParser.Data.Repository
     {
         private ILogger<StockRepository> _logger;
 
-        public StockRepository(ILogger<StockRepository> logger)
+        public StockRepository(ILogger<StockRepository> logger, SqlContext context) : base(context)
         {
             _logger = logger;
         }
@@ -26,20 +23,7 @@ namespace StockParser.Data.Repository
             using (SqlConnection conn = GetOpenConnection())
             {
                 var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Stocks Order By Id Desc"));
-                _logger.LogTrace("Last record received");
-                if (lastRecord == null)
-                {
-                    _logger.LogTrace("Last record received null");
-                    return null;
-                }
-                if (lastRecord.Date.Equals(DateTime.Today))
-                {
-                    _logger.LogTrace("Find record for today");
-                }
-                else
-                {
-                    _logger.LogTrace("There is not any record for today");
-                }
+                
                 return lastRecord;
             }
         }

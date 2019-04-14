@@ -12,7 +12,7 @@ namespace StockParser.Data.Repository
     public class BistRepository : BaseRepository
     {
         private ILogger<BistRepository> _logger;
-        public BistRepository(ILogger<BistRepository> logger)
+        public BistRepository(ILogger<BistRepository> logger, SqlContext context) : base(context)
         {
             _logger = logger;
         }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using StockParser.Data;
 using StockParser.Data.Repository;
 using StockParser.Data.WebParser;
+using System.Configuration;
 
 namespace StockParser.ConsoleClient
 {
@@ -10,8 +11,11 @@ namespace StockParser.ConsoleClient
     {
         static void Main(string[] args)
         {
+            var conn = ConfigurationManager.ConnectionStrings["mssql"].ConnectionString;
+
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
+                .AddSingleton(new SqlContext(conn))
                 .AddSingleton<StockRepository>()
                 .AddSingleton<BistRepository>()
                 .AddSingleton<ConsoleClient>()

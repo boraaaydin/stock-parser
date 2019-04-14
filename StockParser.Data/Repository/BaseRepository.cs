@@ -7,10 +7,15 @@ namespace StockParser.Data.Repository
 {
     public class BaseRepository
     {
+        private SqlContext _context;
+
+        public BaseRepository(SqlContext context)
+        {
+            _context = context;
+        }
         protected SqlConnection GetOpenConnection()
         {
-            var connString = "Server=.;Database=Stocks;Trusted_Connection=True;";
-            var connection = new SqlConnection(connString);
+            var connection = new SqlConnection(_context.ConnectionString);
             connection.Open();
             return connection;
         }
