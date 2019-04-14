@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using StockParser.Data;
 using StockParser.Data.Repository;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using StockParser.Data.WebParser;
 
@@ -39,21 +38,21 @@ namespace StockParser.ConsoleClient
                 while (returnBack)
                 {
                     Console.Clear();
-                    Console.WriteLine(stocks == null ? "Stock bilgisi çekilmedi" : "");
-                    Console.WriteLine(stocks != null ? "Stocklar mevcut" : "");
+                    Console.WriteLine(stocks == null ? "Could not parse stocks" : "");
+                    Console.WriteLine(stocks != null ? "Stocks are present" : "");
                     Console.WriteLine("------------");
-                    Console.WriteLine("0-Çıkış");
-                    Console.WriteLine("1-Hisseleri Webden oku");
-                    Console.WriteLine("2-STOCK tablosuna kaydet");
-                    Console.WriteLine("3-BIST eksik kolonları ekle");
-                    Console.WriteLine("4-BIST kayıtları kaydet");
-                    Console.WriteLine("5-BIST son kayıdı çek");
-                    Console.WriteLine("9-TÜMÜNÜ KAYDET");
+                    Console.WriteLine("0-Exit");
+                    Console.WriteLine("1-Parse Stocks");
+                    Console.WriteLine("2-Insert stocks to STOCK table");
+                    Console.WriteLine("3-Add missing colums to BIST table");
+                    Console.WriteLine("4-Insert stocks to BIST table");
+                    Console.WriteLine("5-Get last row from BIST table");
+                    Console.WriteLine("9-Insert all stocks to BIST and STOCK tables");
                     Console.WriteLine("------------");
-                    Console.WriteLine("Seçiminizi yapınız...");
-                    string secim = Console.ReadLine();
+                    Console.WriteLine("Make your choise...");
+                    var choice = Console.ReadLine();
 
-                    switch (secim)
+                    switch (choice)
                     {
                         case "0":
                             returnBack = false;
@@ -67,7 +66,7 @@ namespace StockParser.ConsoleClient
                             Console.Clear();
                             if (stocks == null)
                             {
-                                Console.WriteLine("Stock bilgisi bulanamadı");
+                                Console.WriteLine("Could not find stock");
                                 break;
                             }
                             var lastRecord = await _stockRepo.GetLastRecordFromStocks();
@@ -79,10 +78,10 @@ namespace StockParser.ConsoleClient
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Bugünkü stoklar daha önce çekilmiş");
-                                    Console.WriteLine("Yine de çekilsin mi. E/H");
+                                    Console.WriteLine("Todays stocks have already been parsed ");
+                                    Console.WriteLine("Parse anyway. y/n");
                                     var result = Console.ReadLine();
-                                    if (result.ToLower() == "e")
+                                    if (result.ToLower() == "y")
                                     {
                                         await _stockRepo.AddToStocks(stocks);
                                     }
@@ -95,22 +94,21 @@ namespace StockParser.ConsoleClient
                             break;
                         case "3":
                             {
-                                Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
+                                Console.WriteLine("Getting column names from BIST table...");
                                 var result = await _bistRepo.AddMissingColumns(stocks);
-                                Console.WriteLine("Kolonlar eklenemedi: " + result.Message);
                                 break;
                             }
                         case "4":
                             {
-                                Console.WriteLine("BIST tablosuna yazılıyor");
+                                Console.WriteLine("Inserting to BIST table...");
                                 var result = await _bistRepo.InsertToBIST(stocks);
                                 if (result.Status != ServiceStatus.Created)
                                 {
-                                    Console.WriteLine("hata: " + result.Message);
+                                    Console.WriteLine("error: " + result.Message);
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Başarıyla kaydedildi");
+                                    Console.WriteLine("Inserted with Success");
                                 }
                                 break;
                             }
@@ -121,7 +119,7 @@ namespace StockParser.ConsoleClient
                             }
 
                     }
-                    Console.WriteLine("Devam etmek için bir tuşa basınız...");
+                    Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
 

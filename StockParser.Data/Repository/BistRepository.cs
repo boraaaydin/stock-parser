@@ -19,22 +19,23 @@ namespace StockParser.Data.Repository
 
         public async Task<StockDto> GetLastRecordFromStocks()
         {
-            _logger.LogTrace("Bugün kayıt yapılıp yapılmadığını kontrol etmek için son kayıt çekiliyor");
+            _logger.LogTrace("Getting last record from Stock Table");
             using (SqlConnection conn = GetOpenConnection())
             {
                 var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Bist Order By Id Desc"));
-                _logger.LogTrace("Son kayıt çekildi");
+                _logger.LogTrace("Last record received");
                 if (lastRecord == null)
                 {
+                    _logger.LogTrace("Last record received null");
                     return null;
                 }
                 if (lastRecord.Date.Equals(DateTime.Today))
                 {
-                    _logger.LogTrace("Bugün kayıt çekilmiş");
+                    _logger.LogTrace("Find record for today");
                 }
                 else
                 {
-                    _logger.LogTrace("Bugün kayıt çekilmemiş");
+                    _logger.LogTrace("There is not any record for today");
                 }
                 return lastRecord;
             }
@@ -57,7 +58,7 @@ namespace StockParser.Data.Repository
                 {
                     return new ServiceResult(ServiceStatus.Created);
                 }
-                return new ServiceResult(ServiceStatus.NotCreated, "Kayıt yapılmadı");
+                return new ServiceResult(ServiceStatus.NotCreated, "Nothing created");
             }
         }
 
@@ -65,31 +66,28 @@ namespace StockParser.Data.Repository
         {
             if (stocks == null)
             {
-                return new ServiceResult(ServiceStatus.Error, "Hisseler çekilmedi");
+                return new ServiceResult(ServiceStatus.Error, "Stock columns could not added");
             }
             var presentColoums = GetColumnNamesFromDbAsync("Bist").Result;
             var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "StockDate" }).ToList();
             var colomnNames = stocks.Select(x => x.StockName);
             var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
-            Console.WriteLine($"{newColomns.Count} adet yeni kolon eklenecek");
-            _logger.LogTrace($"{newColomns.Count} adet yeni kolon eklenecek");
+            _logger.LogTrace($"{newColomns.Count} stock colums will be added");
             return AddDecimalColumnInDb("Bist", newColomns).Result;
         }
 
         public async Task<List<string>> GetColumnNamesFromDbAsync(string dbName)
         {
-            _logger.LogTrace("Kayıtlı stok isimleri ekleniyor");
             using (SqlConnection conn = GetOpenConnection())
             {
                 var result = (await conn.QueryAsync<string>($"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dbName}'")).ToList();
-                _logger.LogTrace($"{result.Count} kayıt bulundu.");
                 return result;
             }
         }
 
         /// <summary>
-        /// Returns Created if Success
-        /// Mesajında oluşturulan hisseleri döner
+        /// Returns Created if Success. 
+        /// Return newly inserted column names in Message property.
         /// </summary>
         /// <param name="dbName"></param>
         /// <param name="columnNames"></param>
@@ -100,7 +98,7 @@ namespace StockParser.Data.Repository
             {
                 if (columnNames.Count > 0)
                 {
-                    _logger.LogTrace($"{String.Join(",", columnNames)} stok isimleri tabloya ekleniyor");
+                    _logger.LogTrace($"{String.Join(",", columnNames)} stocks will be to BIST table");
                     int totalAffectedRows = 0;
                     using (SqlConnection conn = GetOpenConnection())
                     {
@@ -109,7 +107,7 @@ namespace StockParser.Data.Repository
                             foreach (var column in columnNames)
                             {
                                 var affectedRow = await conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(8,2);");
-                                totalAffectedRows += 1;// affectedRow;
+                                totalAffectedRows += 1;
                             }
                         }
                         catch (Exception ex)
@@ -120,7 +118,7 @@ namespace StockParser.Data.Repository
                     }
                     if (totalAffectedRows != columnNames.Count)
                     {
-                        var errorMessage = "kolon sayısı kadar eklenmedi";
+                        var errorMessage = "Some colums could not be added";
                         _logger.LogError(errorMessage);
                         return new ServiceResult(ServiceStatus.Error, errorMessage);
                     }
@@ -130,10 +128,10 @@ namespace StockParser.Data.Repository
                 }
                 else
                 {
-                    return new ServiceResult(ServiceStatus.NotCreated, "liste boş geldi");
+                    return new ServiceResult(ServiceStatus.NotCreated, "Column name list is empty");
                 }
             }
-            return new ServiceResult(ServiceStatus.NotCreated, "liste null geldi");
+            return new ServiceResult(ServiceStatus.NotCreated, "Column name list is null");
         }
 
     }

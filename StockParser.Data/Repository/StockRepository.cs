@@ -22,22 +22,23 @@ namespace StockParser.Data.Repository
 
         public async Task<StockDto> GetLastRecordFromStocks()
         {
-            _logger.LogTrace("Bugün kayıt yapılıp yapılmadığını kontrol etmek için son kayıt çekiliyor");
+            _logger.LogTrace("Getting last record from Stock Table");
             using (SqlConnection conn = GetOpenConnection())
             {
                 var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Stocks Order By Id Desc"));
-                _logger.LogTrace("Son kayıt çekildi");
+                _logger.LogTrace("Last record received");
                 if (lastRecord == null)
                 {
+                    _logger.LogTrace("Last record received null");
                     return null;
                 }
                 if (lastRecord.Date.Equals(DateTime.Today))
                 {
-                    _logger.LogTrace("Bugün kayıt çekilmiş");
+                    _logger.LogTrace("Find record for today");
                 }
                 else
                 {
-                    _logger.LogTrace("Bugün kayıt çekilmemiş");
+                    _logger.LogTrace("There is not any record for today");
                 }
                 return lastRecord;
             }
@@ -45,7 +46,6 @@ namespace StockParser.Data.Repository
 
         public async Task AddToStocks(List<StockDto> list)
         {
-            _logger.LogTrace("Veritabanına yazılıyor...");
             using (SqlConnection conn = GetOpenConnection())
             {
                 using (SqlBulkCopy copy = new SqlBulkCopy(conn))
@@ -75,7 +75,7 @@ namespace StockParser.Data.Repository
                     }
                 }
             }
-            _logger.LogTrace("Veritabanına yazılma işlemi tamamlandı.");
+            _logger.LogTrace("Stocks have been inserted to STOCKS table");
         }
 
     }

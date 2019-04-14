@@ -23,32 +23,30 @@ namespace StockParser.Data
         public void CreateStockData()
         {
             var stocks = _parser.GetData().Result;
-            Console.WriteLine("Mevcut kolon isimleri çekiliyor...");
+            Console.WriteLine("Checking if new columns to be added");
             var result = _bistRepo.AddMissingColumns(stocks).Result;
             if (result.Status == ServiceStatus.Ok)
             {
-                Console.WriteLine("Eklenen hisseler:" + result.Message);
+                Console.WriteLine("New stock names:" + result.Message);
             }
             else
             {
                 Console.WriteLine(result.Message);
             }
-            Console.WriteLine("Stok tablosundan son kayıt çekiliyor");
+            Console.WriteLine("Checking if todays stocks have already been inserted");
             var lastRecord = _stockRepo.GetLastRecordFromStocks().Result;
             if (lastRecord != null && lastRecord.Date != DateTime.Today ||
                 lastRecord == null)
             {
-                Console.WriteLine("Stok tablosuna bugün için kayıtlar eklenmemiş, ekleniyor...");
                 _stockRepo.AddToStocks(stocks).Wait();
-                Console.WriteLine("Stok tablosuna kayıtlar eklendi");
+                Console.WriteLine("Adding stocks to STOCKS table have been completed");
             }
             var lastBistRecord = _bistRepo.GetLastRecordFromStocks().Result;
             if (lastBistRecord != null && lastBistRecord.Date != DateTime.Today ||
                 lastBistRecord == null)
             {
-                Console.WriteLine("BIST tablosuna yazılıyor");
                 _bistRepo.InsertToBIST(stocks).Wait();
-                Console.WriteLine("BIST tablosuna kayıtlar eklendi");
+                Console.WriteLine("Adding stocks to BIST table have been completed");
             }
         }
     }

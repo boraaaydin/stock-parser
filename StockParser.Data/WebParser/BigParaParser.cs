@@ -1,9 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -20,12 +18,11 @@ namespace StockParser.Data.WebParser
         public async Task<List<StockDto>> GetData()
         {
             var mainUrl = "http://push.bigpara.com/borsa/hisse-fiyatlari/";
-            //var harflist = new List<string> { "A","B" ,"C","D", "E" };
-            var harflist = new List<string> { "A", "B", "C", "D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Y","Z" };
+            var letterlist = new List<string> { "A", "B", "C", "D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Y","Z" };
             var taskList = new List<Task<List<StockDto>>>();
-            foreach(var harf in harflist)
+            foreach(var letter in letterlist)
             {
-                var url = new Uri(new Uri(mainUrl), $"{harf}-harfi-ile-baslayan-hisseler");
+                var url = new Uri(new Uri(mainUrl), $"{letter}-harfi-ile-baslayan-hisseler");
                 taskList.Add(GetDataPerPage(url));
             }
 
@@ -38,10 +35,10 @@ namespace StockParser.Data.WebParser
             {
                 var stocks=await task;
                 bulkStockList.AddRange(stocks);
-                _logger.LogTrace( $"{harflist[index]} ile başlayan {stocks.Count} hisse eklendi");
+                _logger.LogTrace( $"{stocks.Count} stocks parsed starting with {letterlist[index]} ");
                 index++;
             }
-            _logger.LogTrace($"Toplam {bulkStockList.Count} hisse çekildi");
+            _logger.LogTrace($"Total {bulkStockList.Count} stocks parsed");
             return bulkStockList;
         }
         public async Task<List<StockDto>> GetDataPerPage(Uri url)
