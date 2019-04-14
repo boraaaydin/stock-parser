@@ -1,8 +1,7 @@
 using System;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
-using Stocker.Data;
+using StockParser.Data;
 using StockParser.Function.Infrastructure;
 
 namespace StockParser.Function
