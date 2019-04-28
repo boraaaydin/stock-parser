@@ -1,14 +1,16 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
+using StockParser.Data;
+using StockParser.Domain;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace StockParser.Data.Repository
+namespace StockParser.Sql.Repositories
 {
-    public class StockRepository : BaseRepository
+    public class StockRepository : BaseRepository, IStockRepository
     {
         private ILogger<StockRepository> _logger;
 
@@ -17,18 +19,31 @@ namespace StockParser.Data.Repository
             _logger = logger;
         }
 
-        public async Task<StockDto> GetLastRecordFromStocks()
+        public async Task<StockDto> GetTodaysRecordFromStocks()
         {
             _logger.LogTrace("Getting last record from Stock Table");
             using (SqlConnection conn = GetOpenConnection())
             {
                 var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Stocks Order By Id Desc"));
-                
-                return lastRecord;
+                if (lastRecord == null)
+                {
+                    _logger.LogTrace("Last record received null");
+                    return null;
+                }
+                if (lastRecord.Date.Equals(DateTime.Today))
+                {
+                    _logger.LogTrace("Find record for today");
+                    return lastRecord;
+                }
+                else
+                {
+                    _logger.LogTrace("There is not any record for today");
+                    return null;
+                }
             }
         }
 
-        public async Task AddToStocks(List<StockDto> list)
+        public async Task InsertToStocks(HashSet<StockDto> list)
         {
             using (SqlConnection conn = GetOpenConnection())
             {

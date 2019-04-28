@@ -1,5 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
+using StockParser.Common;
+using StockParser.Data;
+using StockParser.Domain;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -7,17 +10,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockParser.Data.Repository
+namespace StockParser.Sql.Repositories
 {
-    public class BistRepository : BaseRepository
+    public class BistRepository : BaseRepository, IBistRepository
     {
         private ILogger<BistRepository> _logger;
+
         public BistRepository(ILogger<BistRepository> logger, SqlContext context) : base(context)
         {
             _logger = logger;
         }
 
-        public async Task<StockDto> GetLastRecordFromStocks()
+        public async Task<StockDto> GetTodaysRecordFromStocks()
         {
             _logger.LogTrace("Getting last record from Stock Table");
             using (SqlConnection conn = GetOpenConnection())
@@ -32,17 +36,19 @@ namespace StockParser.Data.Repository
                 if (lastRecord.Date.Equals(DateTime.Today))
                 {
                     _logger.LogTrace("Find record for today");
+                    return lastRecord;
                 }
                 else
                 {
                     _logger.LogTrace("There is not any record for today");
+                    return null;
                 }
-                return lastRecord;
             }
         }
 
-        public async Task<ServiceResult> InsertToBIST(List<StockDto> list)
+        public async Task<ServiceResult> InsertToBIST(HashSet<StockDto> list)
         {
+            AddMissingColumns(list).Wait();
             var query = new StringBuilder();
             query.Append("Insert into Bist (");
             query.Append("StockDate,");
@@ -62,43 +68,35 @@ namespace StockParser.Data.Repository
             }
         }
 
-        public async Task<ServiceResult> AddMissingColumns(List<StockDto> stocks)
+        private async Task<ServiceResult> AddMissingColumns(HashSet<StockDto> stocks)
         {
             if (stocks == null)
             {
                 return new ServiceResult(ServiceStatus.Error, "Stock columns could not added");
             }
-            var presentColoums = GetColumnNamesFromDbAsync("Bist").Result;
-            var presentColoumsExceptSome = presentColoums.Except(new List<string> { "Id", "StockDate" }).ToList();
-            var colomnNames = stocks.Select(x => x.StockName);
-            var newColomns = colomnNames.Except(presentColoumsExceptSome).ToList();
-            _logger.LogTrace($"{newColomns.Count} stock colums will be added");
-            return AddDecimalColumnInDb("Bist", newColomns).Result;
+            var presentColoums = await GetColumnNamesFromDbAsync();
+            var presentColoumsExceptBaseColumns = presentColoums.Except(new List<string> { "Id", "StockDate" }).ToList();
+            var newColumns = stocks.Select(x => x.StockName).Except(presentColoumsExceptBaseColumns).ToList();
+            _logger.LogTrace($"{newColumns.Count} stock colums will be added");
+            return await AddDecimalColumnInDb(newColumns);
         }
 
-        public async Task<List<string>> GetColumnNamesFromDbAsync(string dbName)
+        private async Task<List<string>> GetColumnNamesFromDbAsync()
         {
             using (SqlConnection conn = GetOpenConnection())
             {
-                var result = (await conn.QueryAsync<string>($"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dbName}'")).ToList();
+                var result = (await conn.QueryAsync<string>($"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Bist'")).ToList();
                 return result;
             }
         }
 
-        /// <summary>
-        /// Returns Created if Success. 
-        /// Return newly inserted column names in Message property.
-        /// </summary>
-        /// <param name="dbName"></param>
-        /// <param name="columnNames"></param>
-        /// <returns></returns>
-        public async Task<ServiceResult> AddDecimalColumnInDb(string dbName, List<string> columnNames)
+        private async Task<ServiceResult> AddDecimalColumnInDb(List<string> columnNames)
         {
             if (columnNames != null)
             {
                 if (columnNames.Count > 0)
                 {
-                    _logger.LogTrace($"{String.Join(",", columnNames)} stocks will be to BIST table");
+                    _logger.LogTrace($"{String.Join(",", columnNames)} stocks will be to Bist table");
                     int totalAffectedRows = 0;
                     using (SqlConnection conn = GetOpenConnection())
                     {
@@ -106,7 +104,7 @@ namespace StockParser.Data.Repository
                         {
                             foreach (var column in columnNames)
                             {
-                                var affectedRow = await conn.ExecuteAsync($"ALTER TABLE {dbName} ADD {column} decimal(8,2);");
+                                var affectedRow = await conn.ExecuteAsync($"ALTER TABLE Bist ADD {column} decimal(8,2);");
                                 totalAffectedRows += 1;
                             }
                         }

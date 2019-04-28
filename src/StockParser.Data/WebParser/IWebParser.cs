@@ -1,12 +1,11 @@
-﻿using System;
+﻿using StockParser.Domain;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StockParser.Data.WebParser
 {
-    public interface IParser
+    public interface IWebParser
     {
-        Task<List<StockDto>> GetData();
+        Task<HashSet<StockDto>> GetStockData();
     }
 }

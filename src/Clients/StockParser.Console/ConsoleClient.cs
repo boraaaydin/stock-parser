@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using StockParser.Data;
-using StockParser.Data.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StockParser.Data.WebParser;
-using System.Configuration;
+using StockParser.Domain;
+using StockParser.Common;
 
 namespace StockParser.ConsoleClient
 {
@@ -13,9 +13,9 @@ namespace StockParser.ConsoleClient
     {
         public ConsoleClient(
             ILogger<ConsoleClient> logger, 
-            IParser parser,
-            BistRepository bistRepo,
-            StockRepository stockRepo,
+            IWebParser parser,
+            IBistRepository bistRepo,
+            IStockRepository stockRepo,
             ParserService parserService)
         {
             _stockRepo = stockRepo;
@@ -24,11 +24,11 @@ namespace StockParser.ConsoleClient
             _bistRepo = bistRepo;
             _parserService = parserService;
         }
-        private List<StockDto> stocks;
-        private StockRepository _stockRepo;
+        private HashSet<StockDto> stocks;
+        private IStockRepository _stockRepo;
         private ILogger<ConsoleClient> _logger;
-        private IParser _parser;
-        private BistRepository _bistRepo;
+        private IWebParser _parser;
+        private IBistRepository _bistRepo;
         private ParserService _parserService;
 
         public async Task Run()
@@ -45,11 +45,10 @@ namespace StockParser.ConsoleClient
                     Console.WriteLine("------------");
                     Console.WriteLine("0-Exit");
                     Console.WriteLine("1-Parse Stocks from Web");
-                    Console.WriteLine("2-Insert stocks to STOCKS table");
-                    Console.WriteLine("3-Add missing colums to BIST table");
-                    Console.WriteLine("4-Insert stocks to BIST table");
-                    Console.WriteLine("5-Get last row from STOCKS table");
-                    Console.WriteLine("9-Insert all stocks to BIST and STOCKS tables");
+                    Console.WriteLine("2-Insert stocks to STOCKS");
+                    Console.WriteLine("3-Insert stocks to BIST");
+                    Console.WriteLine("4-Get last row from STOCKS");
+                    Console.WriteLine("9-Insert all stocks to BIST and STOCKS");
                     Console.WriteLine("------------");
                     Console.WriteLine("Make your choise...");
                     var choice = Console.ReadLine();
@@ -61,7 +60,7 @@ namespace StockParser.ConsoleClient
                             break;
                         case "1":
                             Console.Clear();
-                            stocks = await _parser.GetData();
+                            stocks = await _parser.GetStockData();
                             break;
 
                         case "2":
@@ -71,12 +70,12 @@ namespace StockParser.ConsoleClient
                                 Console.WriteLine("Could not find stock");
                                 break;
                             }
-                            var lastRecord = await _stockRepo.GetLastRecordFromStocks();
+                            var lastRecord = await _stockRepo.GetTodaysRecordFromStocks();
                             if (lastRecord != null)
                             {
                                 if (lastRecord.Date != DateTime.Today)
                                 {
-                                    await _stockRepo.AddToStocks(stocks);
+                                    await _stockRepo.InsertToStocks(stocks);
                                 }
                                 else
                                 {
@@ -85,22 +84,16 @@ namespace StockParser.ConsoleClient
                                     var result = Console.ReadLine();
                                     if (result.ToLower() == "y")
                                     {
-                                        await _stockRepo.AddToStocks(stocks);
+                                        await _stockRepo.InsertToStocks(stocks);
                                     }
                                 }
                             }
                             else
                             {
-                                await _stockRepo.AddToStocks(stocks);
+                                await _stockRepo.InsertToStocks(stocks);
                             }
                             break;
                         case "3":
-                            {
-                                Console.WriteLine("Getting column names from BIST table...");
-                                var result = await _bistRepo.AddMissingColumns(stocks);
-                                break;
-                            }
-                        case "4":
                             {
                                 Console.WriteLine("Inserting to BIST table...");
                                 var result = await _bistRepo.InsertToBIST(stocks);
@@ -114,10 +107,10 @@ namespace StockParser.ConsoleClient
                                 }
                                 break;
                             }
-                        case "5":
+                        case "4":
                             {
                                 Console.WriteLine("Getting last row from STOCKS table");
-                                lastRecord = await _stockRepo.GetLastRecordFromStocks();
+                                lastRecord = await _stockRepo.GetTodaysRecordFromStocks();
                                 if (lastRecord == null)
                                 {
                                     Console.WriteLine("Last record received null");
@@ -137,7 +130,7 @@ namespace StockParser.ConsoleClient
                             }
                         case "9":
                             {
-                                _parserService.CreateStockData();
+                                _parserService.InsertStockData().Wait();
                                 break;
                             }
 

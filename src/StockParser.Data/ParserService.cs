@@ -1,53 +1,39 @@
-﻿using Microsoft.Extensions.Logging;
-using StockParser.Data.Repository;
-using StockParser.Data.WebParser;
-using System;
+﻿using StockParser.Data.WebParser;
+using StockParser.Domain;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace StockParser.Data
 {
     public class ParserService
     {
-        private IParser _parser;
-        private BistRepository _bistRepo;
-        private StockRepository _stockRepo;
+        private IBistRepository _bistRepo;
+        private IWebParser _webParser;
+        private IStockRepository _stockRepo;
+        public List<StockDto> stocks;
 
-        public ParserService(ILogger<ParserService> logger,
-            IParser parser,
-            BistRepository bistRepo,
-            StockRepository stockRepo)
+        public ParserService(IWebParser webParser, IBistRepository bistRepo, IStockRepository stockRepo)
         {
-            _parser = parser;
             _bistRepo = bistRepo;
-            _stockRepo=stockRepo;
+            _webParser = webParser;
+            _stockRepo = stockRepo;
         }
-        public void CreateStockData()
+
+        public async Task InsertStockData()
         {
-            var stocks = _parser.GetData().Result;
-            Console.WriteLine("Checking if new columns to be added");
-            var result = _bistRepo.AddMissingColumns(stocks).Result;
-            if (result.Status == ServiceStatus.Ok)
+            var lastBistRecord = await _bistRepo.GetTodaysRecordFromStocks();
+            if (lastBistRecord == null)
             {
-                Console.WriteLine("New stock names:" + result.Message);
+                var stocks = await _webParser.GetStockData();       
+                await _bistRepo.InsertToBIST(stocks);
             }
-            else
+            var lastStockRecord = await _stockRepo.GetTodaysRecordFromStocks();
+            if (lastStockRecord == null)
             {
-                Console.WriteLine(result.Message);
+                var stocks = await _webParser.GetStockData();
+                await _stockRepo.InsertToStocks(stocks);
             }
-            Console.WriteLine("Checking if todays stocks have already been inserted");
-            var lastRecord = _stockRepo.GetLastRecordFromStocks().Result;
-            if (lastRecord != null && lastRecord.Date != DateTime.Today ||
-                lastRecord == null)
-            {
-                _stockRepo.AddToStocks(stocks).Wait();
-                Console.WriteLine("Adding stocks to STOCKS table have been completed");
-            }
-            var lastBistRecord = _bistRepo.GetLastRecordFromStocks().Result;
-            if (lastBistRecord != null && lastBistRecord.Date != DateTime.Today ||
-                lastBistRecord == null)
-            {
-                _bistRepo.InsertToBIST(stocks).Wait();
-                Console.WriteLine("Adding stocks to BIST table have been completed");
-            }
+
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StockParser.Data;
-using StockParser.Data.Repository;
 using StockParser.Data.WebParser;
+using StockParser.Sql;
+using StockParser.Sql.Repositories;
 using System.Configuration;
 
 namespace StockParser.ConsoleClient
@@ -16,11 +17,11 @@ namespace StockParser.ConsoleClient
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
                 .AddSingleton(new SqlContext(conn))
-                .AddSingleton<StockRepository>()
-                .AddSingleton<BistRepository>()
+                .AddSingleton<IStockRepository,StockRepository>()
+                .AddSingleton<IBistRepository,BistRepository>()
                 .AddSingleton<ConsoleClient>()
-                .AddSingleton<ParserService>()
-                .AddSingleton<IParser, BigParaParser>()
+                .AddScoped<ParserService>()
+                .AddSingleton<IWebParser, BigParaParser>()
                 .BuildServiceProvider();
 
             //configure console logging

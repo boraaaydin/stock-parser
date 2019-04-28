@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.60.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
@@ -17,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\StockParser.Data\StockParser.Data.csproj" />
+    <ProjectReference Include="..\..\StockParser.Sql\StockParser.Sql.csproj" />
   </ItemGroup>
 
 </Project>

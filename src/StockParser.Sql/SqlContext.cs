@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace StockParser.Data.Repository
+namespace StockParser.Sql
 {
     public class SqlContext
     {

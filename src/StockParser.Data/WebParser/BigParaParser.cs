@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using StockParser.Domain;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -7,41 +8,46 @@ using System.Threading.Tasks;
 
 namespace StockParser.Data.WebParser
 {
-    public class BigParaParser:IParser
+    public class BigParaParser:IWebParser
     {
         private ILogger<BigParaParser> _logger;
+        private HashSet<StockDto> StockData;
 
         public BigParaParser(ILogger<BigParaParser> logger)
         {
             _logger = logger;
         }
-        public async Task<List<StockDto>> GetData()
+        public async Task<HashSet<StockDto>> GetStockData()
         {
-            var mainUrl = "http://push.bigpara.com/borsa/hisse-fiyatlari/";
-            var letterlist = new List<string> { "A", "B", "C", "D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Y","Z" };
-            var taskList = new List<Task<List<StockDto>>>();
-            foreach(var letter in letterlist)
+            if (StockData == null)
             {
-                var url = new Uri(new Uri(mainUrl), $"{letter}-harfi-ile-baslayan-hisseler");
-                taskList.Add(GetDataPerPage(url));
-            }
+                var mainUrl = "http://push.bigpara.com/borsa/hisse-fiyatlari/";
+                var letterlist = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V", "Y", "Z" };
+                var taskList = new List<Task<HashSet<StockDto>>>();
+                foreach (var letter in letterlist)
+                {
+                    var url = new Uri(new Uri(mainUrl), $"{letter}-harfi-ile-baslayan-hisseler");
+                    taskList.Add(GetDataPerPage(url));
+                }
 
-            await Task.WhenAll(taskList);
+                await Task.WhenAll(taskList);
 
-            var bulkStockList = new List<StockDto>();
-            var index = 0;
-            
-            foreach(var task in taskList)
-            {
-                var stocks=await task;
-                bulkStockList.AddRange(stocks);
-                _logger.LogTrace( $"{stocks.Count} stocks parsed starting with {letterlist[index]} ");
-                index++;
+                StockData = new HashSet<StockDto>();
+                var index = 0;
+
+                foreach (var task in taskList)
+                {
+                    var stocks = await task;
+                    StockData.UnionWith(stocks);
+                    _logger.LogTrace($"{stocks.Count} stocks parsed starting with {letterlist[index]} ");
+                    index++;
+                }
+                _logger.LogTrace($"Total {StockData.Count} stocks parsed");
             }
-            _logger.LogTrace($"Total {bulkStockList.Count} stocks parsed");
-            return bulkStockList;
+            return StockData;
         }
-        public async Task<List<StockDto>> GetDataPerPage(Uri url)
+
+        public async Task<HashSet<StockDto>> GetDataPerPage(Uri url)
         {
             HttpClient client = new HttpClient();
             var response = await client.GetAsync(url);
@@ -93,7 +99,7 @@ namespace StockParser.Data.WebParser
                 stockList.Add(stock);
             }
 
-            return stockList;
+            return new HashSet<StockDto>(stockList);
         }
     }
 

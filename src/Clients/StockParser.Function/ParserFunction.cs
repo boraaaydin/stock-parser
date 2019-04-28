@@ -14,7 +14,7 @@ namespace StockParser.Function
             [Inject] ParserService parserService)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-            parserService.CreateStockData();
+            parserService.InsertStockData().Wait();
         }
     }
 }
