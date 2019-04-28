@@ -150,6 +150,7 @@ namespace StockParser.ConsoleClient
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
+                Console.ReadKey();
             }
         }
     }
