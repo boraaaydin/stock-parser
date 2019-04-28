@@ -11,11 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Function", "Cli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{FCCF4960-17CF-42D4-9863-53DDE1223AF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockParser.Sql", "StockParser.Sql\StockParser.Sql.csproj", "{DB672040-A091-40A9-8050-42A23E2DF9FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Sql", "StockParser.Sql\StockParser.Sql.csproj", "{DB672040-A091-40A9-8050-42A23E2DF9FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockParser.Domain", "StockParser.Domain\StockParser.Domain.csproj", "{285F7490-52AC-4CA7-A526-B09B72AA1DFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Domain", "StockParser.Domain\StockParser.Domain.csproj", "{285F7490-52AC-4CA7-A526-B09B72AA1DFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockParser.Common", "StockParser.Common\StockParser.Common.csproj", "{E92FA8C9-79DF-41FE-86E4-476F7690FE47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Common", "StockParser.Common\StockParser.Common.csproj", "{E92FA8C9-79DF-41FE-86E4-476F7690FE47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockParser.Web", "Clients\StockParser.Web\StockParser.Web.csproj", "{70288CB0-842E-499F-98D3-6AC32723D841}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{E92FA8C9-79DF-41FE-86E4-476F7690FE47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E92FA8C9-79DF-41FE-86E4-476F7690FE47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E92FA8C9-79DF-41FE-86E4-476F7690FE47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70288CB0-842E-499F-98D3-6AC32723D841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70288CB0-842E-499F-98D3-6AC32723D841}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70288CB0-842E-499F-98D3-6AC32723D841}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70288CB0-842E-499F-98D3-6AC32723D841}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3E30C1A7-642F-48F5-A09E-F90E9F9EDDB0} = {FCCF4960-17CF-42D4-9863-53DDE1223AF1}
 		{91927857-9C40-4182-A0B6-2F14A9005DD2} = {FCCF4960-17CF-42D4-9863-53DDE1223AF1}
+		{70288CB0-842E-499F-98D3-6AC32723D841} = {FCCF4960-17CF-42D4-9863-53DDE1223AF1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1DFE41AD-27E1-4533-B455-65C6248B5A17}

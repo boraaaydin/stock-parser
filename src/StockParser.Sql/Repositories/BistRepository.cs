@@ -26,7 +26,7 @@ namespace StockParser.Sql.Repositories
             _logger.LogTrace("Getting last record from Stock Table");
             using (SqlConnection conn = GetOpenConnection())
             {
-                var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Bist Order By Id Desc"));
+                var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Stocks Order By Id Desc"));
                 _logger.LogTrace("Last record received");
                 if (lastRecord == null)
                 {

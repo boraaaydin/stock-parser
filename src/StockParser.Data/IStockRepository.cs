@@ -1,4 +1,5 @@
-﻿using StockParser.Domain;
+﻿using StockParser.Common;
+using StockParser.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace StockParser.Data
 {
     public interface IStockRepository
     {
-        Task InsertToStocks(HashSet<StockDto> list);
+        Task<ServiceResult> InsertToStocks(HashSet<StockDto> list);
         Task<StockDto> GetTodaysRecordFromStocks();
     }
 }

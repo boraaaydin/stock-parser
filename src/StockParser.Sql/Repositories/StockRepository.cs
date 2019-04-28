@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
+using StockParser.Common;
 using StockParser.Data;
 using StockParser.Domain;
 using System;
@@ -43,7 +44,7 @@ namespace StockParser.Sql.Repositories
             }
         }
 
-        public async Task InsertToStocks(HashSet<StockDto> list)
+        public async Task<ServiceResult> InsertToStocks(HashSet<StockDto> list)
         {
             using (SqlConnection conn = GetOpenConnection())
             {
@@ -75,6 +76,7 @@ namespace StockParser.Sql.Repositories
                 }
             }
             _logger.LogTrace("Stocks have been inserted to STOCKS table");
+            return new ServiceResult(ServiceStatus.Ok);
         }
 
     }
