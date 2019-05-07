@@ -18,6 +18,7 @@
     "StockParser.Web": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "api/stock/insertstock",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
