@@ -60,7 +60,11 @@ namespace StockParser.ConsoleClient
                             break;
                         case "1":
                             Console.Clear();
-                            stocks = await _parser.GetStockData();
+                            var stocksResult = await _parser.GetStockData();
+                            if (stocksResult.Status == ServiceStatus.Ok)
+                            {
+                                stocks = stocksResult.Entity;
+                            }
                             break;
 
                         case "2":

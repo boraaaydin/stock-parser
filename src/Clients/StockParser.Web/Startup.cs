@@ -35,6 +35,7 @@ namespace StockParser.Web
                 .AddSingleton<IStockRepository, StockRepository>()
                 .AddSingleton<IBistRepository, BistRepository>()
                 .AddScoped<ParserService>()
+                .AddSingleton<ICustomLogger,WebLogger>()
                 .AddSingleton<IWebParser, BigParaParser>();
         }
 

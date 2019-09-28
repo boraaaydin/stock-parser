@@ -13,32 +13,30 @@ namespace StockParser.Sql.Repositories
 {
     public class StockRepository : BaseRepository, IStockRepository
     {
-        private ILogger<StockRepository> _logger;
 
-        public StockRepository(ILogger<StockRepository> logger, SqlContext context) : base(context)
+        public StockRepository(SqlContext context) : base(context)
         {
-            _logger = logger;
         }
 
         public async Task<StockDto> GetTodaysRecordFromStocks()
         {
-            _logger.LogTrace("Getting last record from Stock Table");
+            //_logger.LogTrace("Getting last record from Stock Table");
             using (SqlConnection conn = GetOpenConnection())
             {
                 var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Stocks Order By Id Desc"));
                 if (lastRecord == null)
                 {
-                    _logger.LogTrace("Last record received null");
+                    //_logger.LogTrace("Last record received null");
                     return null;
                 }
                 if (lastRecord.Date.Equals(DateTime.Today))
                 {
-                    _logger.LogTrace("Find record for today");
+                    //_logger.LogTrace("Find record for today");
                     return lastRecord;
                 }
                 else
                 {
-                    _logger.LogTrace("There is not any record for today");
+                    //_logger.LogTrace("There is not any record for today");
                     return null;
                 }
             }
@@ -75,7 +73,7 @@ namespace StockParser.Sql.Repositories
                     }
                 }
             }
-            _logger.LogTrace("Stocks have been inserted to STOCKS table");
+            //_logger.LogTrace("Stocks have been inserted to STOCKS table");
             return new ServiceResult(ServiceStatus.Ok);
         }
 

@@ -4,12 +4,10 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
-    <PackageReference Include="Moq" Version="4.10.1" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.27" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\StockParser.Data\StockParser.Data.csproj" />
-    <ProjectReference Include="..\..\StockParser.Sql\StockParser.Sql.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

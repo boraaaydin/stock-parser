@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Domain", "Stock
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Common", "StockParser.Common\StockParser.Common.csproj", "{E92FA8C9-79DF-41FE-86E4-476F7690FE47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockParser.Web", "Clients\StockParser.Web\StockParser.Web.csproj", "{70288CB0-842E-499F-98D3-6AC32723D841}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Web", "Clients\StockParser.Web\StockParser.Web.csproj", "{70288CB0-842E-499F-98D3-6AC32723D841}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -13,29 +13,40 @@ namespace StockParser.Data
         private IStockRepository _stockRepo;
         public List<StockDto> stocks;
 
-        public ParserService(IWebParser webParser, IBistRepository bistRepo, IStockRepository stockRepo)
+        public ICustomLogger _logger { get; }
+
+        public ParserService(IWebParser webParser, IBistRepository bistRepo, IStockRepository stockRepo, ICustomLogger logger)
         {
             _bistRepo = bistRepo;
             _webParser = webParser;
             _stockRepo = stockRepo;
+            _logger = logger;
         }
 
         public async Task<ServiceResult> InsertStockData()
         {
+
             var infoMessage = "";
             var errorMessage = "";
             var lastBistRecord = await _bistRepo.GetTodaysRecordFromStocks();
             if (lastBistRecord == null)
             {
-                var stocks = await _webParser.GetStockData();       
-                var bistResult= await _bistRepo.InsertToBIST(stocks);
-                if (bistResult.Status == ServiceStatus.Error)
+                var stocksResult = await _webParser.GetStockData();
+                if (stocksResult.Status != ServiceStatus.Ok)
                 {
-                    errorMessage += bistResult.Message;
+                    errorMessage += stocksResult.Message;
                 }
                 else
                 {
-                    infoMessage += "Bist data inserted";
+                    var bistResult = await _bistRepo.InsertToBIST(stocksResult.Entity);
+                    if (bistResult.Status == ServiceStatus.Error)
+                    {
+                        errorMessage += bistResult.Message;
+                    }
+                    else
+                    {
+                        infoMessage += "Bist data inserted";
+                    }
                 }
             }
             else
@@ -45,15 +56,22 @@ namespace StockParser.Data
             var lastStockRecord = await _stockRepo.GetTodaysRecordFromStocks();
             if (lastStockRecord == null)
             {
-                var stocks = await _webParser.GetStockData();
-                var stockResult = await _stockRepo.InsertToStocks(stocks);
-                if (stockResult.Status == ServiceStatus.Error)
+                var stocksResult = await _webParser.GetStockData();
+                if (stocksResult.Status != ServiceStatus.Ok)
                 {
-                    errorMessage += stockResult.Message;
+                    errorMessage += stocksResult.Message;
                 }
                 else
                 {
-                    infoMessage += "Stock data inserted";
+                    var stockResult = await _stockRepo.InsertToStocks(stocksResult.Entity);
+                    if (stockResult.Status == ServiceStatus.Error)
+                    {
+                        errorMessage += stockResult.Message;
+                    }
+                    else
+                    {
+                        infoMessage += "Stock data inserted";
+                    }
                 }
             }
             else

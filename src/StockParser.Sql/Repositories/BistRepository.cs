@@ -14,33 +14,30 @@ namespace StockParser.Sql.Repositories
 {
     public class BistRepository : BaseRepository, IBistRepository
     {
-        private ILogger<BistRepository> _logger;
-
-        public BistRepository(ILogger<BistRepository> logger, SqlContext context) : base(context)
+        public BistRepository(SqlContext context) : base(context)
         {
-            _logger = logger;
         }
 
         public async Task<StockDto> GetTodaysRecordFromStocks()
         {
-            _logger.LogTrace("Getting last record from Stock Table");
+            //_logger.LogTrace("Getting last record from Stock Table");
             using (SqlConnection conn = GetOpenConnection())
             {
                 var lastRecord = (await conn.QueryFirstOrDefaultAsync<StockDto>("Select TOP 1 * From Stocks Order By Id Desc"));
-                _logger.LogTrace("Last record received");
+                //_logger.LogTrace("Last record received");
                 if (lastRecord == null)
                 {
-                    _logger.LogTrace("Last record received null");
+                    //_logger.LogTrace("Last record received null");
                     return null;
                 }
                 if (lastRecord.Date.Equals(DateTime.Today))
                 {
-                    _logger.LogTrace("Find record for today");
+                    //_logger.LogTrace("Find record for today");
                     return lastRecord;
                 }
                 else
                 {
-                    _logger.LogTrace("There is not any record for today");
+                    //_logger.LogTrace("There is not any record for today");
                     return null;
                 }
             }
@@ -48,37 +45,57 @@ namespace StockParser.Sql.Repositories
 
         public async Task<ServiceResult> InsertToBIST(HashSet<StockDto> list)
         {
-            AddMissingColumns(list).Wait();
-            var query = new StringBuilder();
-            query.Append("Insert into Bist (");
-            query.Append("StockDate,");
-            query.Append(String.Join(",", list.Select(x => x.StockName).ToList()));
-            query.Append(") Values (");
-            query.Append("GETDATE(),");
-            query.Append(String.Join(",", list.Select(x => x.FinalPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)).ToList()));
-            query.Append(")");
-            using (SqlConnection conn = GetOpenConnection())
+            var res=AddMissingColumns(list).Result;
+            if (res.Status != ServiceStatus.Ok)
             {
-                var result = await conn.ExecuteAsync(query.ToString());
-                if (result > 0)
-                {
-                    return new ServiceResult(ServiceStatus.Created);
-                }
-                return new ServiceResult(ServiceStatus.NotCreated, "Nothing created");
+                return res;
             }
+            try
+            {
+                var query = new StringBuilder();
+                query.Append("Insert into Bist (");
+                query.Append("StockDate,");
+                query.Append(String.Join(",", list.Select(x => x.StockName).ToList()));
+                query.Append(") Values (");
+                query.Append("GETDATE(),");
+                query.Append(String.Join(",", list.Select(x => x.FinalPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)).ToList()));
+                query.Append(")");
+                using (SqlConnection conn = GetOpenConnection())
+                {
+                    var result = await conn.ExecuteAsync(query.ToString());
+                    if (result > 0)
+                    {
+                        return new ServiceResult(ServiceStatus.Created);
+                    }
+                    return new ServiceResult(ServiceStatus.NotCreated, "Nothing created");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ServiceStatus.Error, "InsertToBIST hata: " + ex.Message);
+            }
+
         }
 
         private async Task<ServiceResult> AddMissingColumns(HashSet<StockDto> stocks)
         {
-            if (stocks == null)
+            try
             {
-                return new ServiceResult(ServiceStatus.Error, "Stock columns could not added");
+                if (stocks == null)
+                {
+                    return new ServiceResult(ServiceStatus.Error, "Stock columns could not added");
+                }
+                var presentColoums = await GetColumnNamesFromDbAsync();
+                var presentColoumsExceptBaseColumns = presentColoums.Except(new List<string> { "Id", "StockDate" }).ToList();
+                var newColumns = stocks.Select(x => x.StockName).Except(presentColoumsExceptBaseColumns).ToList();
+                //_logger.LogTrace($"{newColumns.Count} stock colums will be added");
+                return await AddDecimalColumnInDb(newColumns);
             }
-            var presentColoums = await GetColumnNamesFromDbAsync();
-            var presentColoumsExceptBaseColumns = presentColoums.Except(new List<string> { "Id", "StockDate" }).ToList();
-            var newColumns = stocks.Select(x => x.StockName).Except(presentColoumsExceptBaseColumns).ToList();
-            _logger.LogTrace($"{newColumns.Count} stock colums will be added");
-            return await AddDecimalColumnInDb(newColumns);
+            catch (Exception ex)
+            {
+                return new ServiceResult(ServiceStatus.Error, "AddMissingColumns hata: " + ex.Message);
+            }
+
         }
 
         private async Task<List<string>> GetColumnNamesFromDbAsync()
@@ -96,7 +113,7 @@ namespace StockParser.Sql.Repositories
             {
                 if (columnNames.Count > 0)
                 {
-                    _logger.LogTrace($"{String.Join(",", columnNames)} stocks will be to Bist table");
+                    //_logger.LogTrace($"{String.Join(",", columnNames)} stocks will be to Bist table");
                     int totalAffectedRows = 0;
                     using (SqlConnection conn = GetOpenConnection())
                     {
@@ -110,18 +127,18 @@ namespace StockParser.Sql.Repositories
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(ex, ex.Message);
+                            //_logger.LogError(ex, ex.Message);
                             return new ServiceResult(ServiceStatus.Error, ex.Message);
                         }
                     }
                     if (totalAffectedRows != columnNames.Count)
                     {
                         var errorMessage = "Some colums could not be added";
-                        _logger.LogError(errorMessage);
+                        //_logger.LogError(errorMessage);
                         return new ServiceResult(ServiceStatus.Error, errorMessage);
                     }
 
-                    _logger.LogTrace("Kayıtlar eklendi");
+                    //_logger.LogTrace("Kayıtlar eklendi");
                     return new ServiceResult(ServiceStatus.Created, string.Join(", ", columnNames));
                 }
                 else
