@@ -2,33 +2,42 @@
 using StockParser.Data;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace StockParser.ConsoleClient
 {
-    public class ConsoleLogger : ICustomLogger
+    class ConsoleLogger:ICustomLogger
     {
-        public ConsoleLogger(ILogger<ConsoleLogger> logger)
+        private ILogger _logger;
+
+        public ConsoleLogger(ILoggerFactory loggerFactory)
         {
-            Logger = logger;
+            _logger = loggerFactory.CreateLogger("ConsoleLogger");
         }
 
-        public ILogger<ConsoleLogger> Logger { get; }
+        public void LogTrace(string text)
+        {
+            _logger.LogTrace(text);
+        }
 
         public void LogDebug(string text)
         {
-            Logger.LogDebug(text);
+            _logger.LogDebug(text);
         }
 
         public void LogError(string text)
         {
-            Logger.LogError(text);
+            _logger.LogError(text);
         }
 
         public void LogInformation(string text)
         {
-            Logger.LogInformation(text);
+            _logger.LogInformation(text);
+        }
+
+        public void LogError(Exception ex, string text)
+        {
+            _logger.LogError(text);
         }
     }
 }

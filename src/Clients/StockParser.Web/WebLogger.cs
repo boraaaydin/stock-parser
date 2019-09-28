@@ -26,9 +26,19 @@ namespace StockParser.Web
             Logger.LogError(text);
         }
 
+        public void LogError(Exception ex, string text)
+        {
+            Logger.LogError(ex,text);
+        }
+
         public void LogInformation(string text)
         {
             Logger.LogInformation(text);
+        }
+
+        public void LogTrace(string text)
+        {
+            Logger.LogTrace(text);
         }
     }
 }

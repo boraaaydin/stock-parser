@@ -24,9 +24,19 @@ namespace StockParser.Function
             _log.LogError(text);
         }
 
+        public void LogError(Exception ex, string text)
+        {
+            _log.LogError(ex,text);
+        }
+
         public void LogInformation(string text)
         {
             _log.LogInformation(text);
+        }
+
+        public void LogTrace(string text)
+        {
+            _log.LogTrace(text);
         }
     }
 }

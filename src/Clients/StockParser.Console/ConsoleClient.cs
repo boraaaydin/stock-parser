@@ -12,7 +12,7 @@ namespace StockParser.ConsoleClient
     public class ConsoleClient
     {
         public ConsoleClient(
-            ILogger<ConsoleClient> logger, 
+            ICustomLogger logger,
             IWebParser parser,
             IBistRepository bistRepo,
             IStockRepository stockRepo,
@@ -26,7 +26,7 @@ namespace StockParser.ConsoleClient
         }
         private HashSet<StockDto> stocks;
         private IStockRepository _stockRepo;
-        private ILogger<ConsoleClient> _logger;
+        private ICustomLogger _logger;
         private IWebParser _parser;
         private IBistRepository _bistRepo;
         private ParserService _parserService;
