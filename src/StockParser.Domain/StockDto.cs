@@ -15,8 +15,8 @@ namespace StockParser.Domain
         public decimal AveragePrice { get; set; }
         public long VolumeLot { get; set; }
         public long VolumeTL { get; set; }
-        public DateTime Date { get; set; }
-        public DateTime CreatedAt { get; set; }
+        //public DateTime Date { get; set; }
+        //public DateTime CreatedAt { get; set; }
 
     }
 }

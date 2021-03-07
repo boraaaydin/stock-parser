@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using StockParser.Data;
 using StockParser.Data.WebParser;
+using StockParser.Domain;
 using StockParser.Sql;
 using StockParser.Sql.Repositories;
 using System.Configuration;

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using StockParser.Common;
 using StockParser.Data;
 using StockParser.Domain;
+using StockParser.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,7 +21,7 @@ namespace StockParser.Sql.Repositories
             _logger = logger;
         }
 
-        public async Task<StockDto> GetTodaysRecordFromStocks()
+        public async Task<StockDto> GetTodaysRecordFromStocks(string stockName)
         {
             _logger.LogTrace("Getting last record from Stock Table");
             using (SqlConnection conn = GetOpenConnection())
@@ -31,17 +32,23 @@ namespace StockParser.Sql.Repositories
                     _logger.LogTrace("Last record received null");
                     return null;
                 }
-                if (lastRecord.Date.Equals(DateTime.Today))
-                {
-                    _logger.LogTrace("Find record for today");
-                    return lastRecord;
-                }
-                else
-                {
-                    _logger.LogTrace("There is not any record for today");
-                    return null;
-                }
+                return lastRecord;
+                //if (lastRecord.Date.Equals(DateTime.Today))
+                //{
+                //    _logger.LogTrace("Find record for today");
+                //    return lastRecord;
+                //}
+                //else
+                //{
+                //    _logger.LogTrace("There is not any record for today");
+                //    return null;
+                //}
             }
+        }
+
+        public Task<IEnumerable<StockDto>> GetTodaysRecordsFromStocks()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<ServiceResult> InsertToStocks(HashSet<StockDto> list)
@@ -79,5 +86,9 @@ namespace StockParser.Sql.Repositories
             return new ServiceResult(ServiceStatus.Ok);
         }
 
+        Task<List<IBistStock>> IStockRepository.GetStockByDate(DateTime date)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

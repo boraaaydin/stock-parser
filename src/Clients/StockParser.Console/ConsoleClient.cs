@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using StockParser.Data.WebParser;
 using StockParser.Domain;
 using StockParser.Common;
+using StockParser.Domain.Models;
+using StockParser.Domain.Services;
 
 namespace StockParser.ConsoleClient
 {
@@ -15,17 +17,17 @@ namespace StockParser.ConsoleClient
             ICustomLogger logger,
             IWebParser parser,
             IBistRepository bistRepo,
-            IStockRepository stockRepo,
+            IStockService stockService,
             ParserService parserService)
         {
-            _stockRepo = stockRepo;
+            _stockService = stockService;
             _logger = logger;
             _parser = parser;
             _bistRepo = bistRepo;
             _parserService = parserService;
         }
-        private HashSet<StockDto> stocks;
-        private IStockRepository _stockRepo;
+        private HashSet<IBistStock> stocks;
+        private IStockService _stockService;
         private ICustomLogger _logger;
         private IWebParser _parser;
         private IBistRepository _bistRepo;
@@ -74,33 +76,33 @@ namespace StockParser.ConsoleClient
                                 Console.WriteLine("Could not find stock");
                                 break;
                             }
-                            var lastRecord = await _stockRepo.GetTodaysRecordFromStocks();
+                            var lastRecord = await _stockService.GetStock(DateTime.Now.Date, "ISCTR");
                             if (lastRecord != null)
                             {
-                                if (lastRecord.Date != DateTime.Today)
-                                {
-                                    await _stockRepo.InsertToStocks(stocks);
-                                }
-                                else
-                                {
+                                //if (lastRecord.Date != DateTime.Today)
+                                //{
+                                //    await _stockRepo.InsertToStocks(stocks);
+                                //}
+                                //else
+                                //{
                                     Console.WriteLine("Todays stocks have already been parsed ");
                                     Console.WriteLine("Parse anyway. y/n");
                                     var result = Console.ReadLine();
                                     if (result.ToLower() == "y")
                                     {
-                                        await _stockRepo.InsertToStocks(stocks);
+                                        await _stockService.InsertToStocks(stocks);
                                     }
-                                }
+                                //}
                             }
                             else
                             {
-                                await _stockRepo.InsertToStocks(stocks);
+                                await _stockService.InsertToStocks(stocks);
                             }
                             break;
                         case "3":
                             {
                                 Console.WriteLine("Inserting to BIST table...");
-                                var result = await _bistRepo.InsertToBIST(stocks);
+                                var result = await _stockService.InsertToStocks(stocks);
                                 if (result.Status != ServiceStatus.Created)
                                 {
                                     Console.WriteLine("error: " + result.Message);
@@ -114,21 +116,21 @@ namespace StockParser.ConsoleClient
                         case "4":
                             {
                                 Console.WriteLine("Getting last row from STOCKS table");
-                                lastRecord = await _stockRepo.GetTodaysRecordFromStocks();
+                                lastRecord = await _stockService.GetStock(DateTime.Now.Date, "ISCTR");
                                 if (lastRecord == null)
                                 {
                                     Console.WriteLine("Last record received null");
                                 }
                                 else
                                 {
-                                    if (lastRecord.Date.Equals(DateTime.Today))
-                                    {
-                                        Console.WriteLine("Find record for today");
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("There is not any record for today");
-                                    }
+                                    //if (lastRecord.Date.Equals(DateTime.Today))
+                                    //{
+                                    //    Console.WriteLine("Find record for today");
+                                    //}
+                                    //else
+                                    //{
+                                    //    Console.WriteLine("There is not any record for today");
+                                    //}
                                 }
                                 break;
                             }

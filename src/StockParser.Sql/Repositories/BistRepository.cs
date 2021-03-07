@@ -33,16 +33,17 @@ namespace StockParser.Sql.Repositories
                     _logger.LogTrace("Last record received null");
                     return null;
                 }
-                if (lastRecord.Date.Equals(DateTime.Today))
-                {
-                    _logger.LogTrace("Find record for today");
-                    return lastRecord;
-                }
-                else
-                {
-                    _logger.LogTrace("There is not any record for today");
-                    return null;
-                }
+                return lastRecord;
+                //if (lastRecord.Date.Equals(DateTime.Today))
+                //{
+                //    _logger.LogTrace("Find record for today");
+                //    return lastRecord;
+                //}
+                //else
+                //{
+                //    _logger.LogTrace("There is not any record for today");
+                //    return null;
+                //}
             }
         }
 

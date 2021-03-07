@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using StockParser.Data;
+using StockParser.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;

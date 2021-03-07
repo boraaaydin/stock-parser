@@ -2,33 +2,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using StockParser.Common;
 using StockParser.Data;
+using StockParser.Data.WebParser;
+using StockParser.Domain;
+using StockParser.Domain.Services;
 
 namespace StockParser.Web.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class StockController : ControllerBase
+    public class StockController : Controller
     {
-        private ParserService _parserService;
+        private ParserService _service;
 
-        public StockController(ParserService parserService)
+        public StockController(ParserService service)
         {
-            _parserService = parserService;
+            _service = service;
+        }
+        public async Task<IActionResult> Index()
+        {
+            var result=await _service.InsertStockData();
+            return Ok(result.Message);
         }
 
-        [HttpGet("InsertStock")]
-        public async Task<IActionResult> InsertStock()
-        {
-            var result = await _parserService.InsertStockData();
-            if (result.Status == Common.ServiceStatus.Ok)
-            {
-                return Ok(new ApiResponseSuccess(result.Message));
-            }
-            return Ok(new ApiResponseError(result.Message));
-        }
+        //public async Task<IActionResult> Get()
+        //{
+        //    try
+        //    {
+        //        var stocks = await _parser.GetStockData();
+        //        var recordOftoday = await _service.GetStock(DateTime.Now.Date, "ISCTR");
+
+        //        if (stocks.Status == ServiceStatus.Ok)
+        //        {
+        //            return Ok(stocks.Entity);
+        //        }
+        //        return Ok(stocks.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(ex.Message);
+        //    }
+
+        //}
     }
 }

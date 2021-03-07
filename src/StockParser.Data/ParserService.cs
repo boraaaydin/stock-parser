@@ -1,6 +1,8 @@
 ﻿using StockParser.Common;
 using StockParser.Data.WebParser;
 using StockParser.Domain;
+using StockParser.Domain.Services;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,28 +10,25 @@ namespace StockParser.Data
 {
     public class ParserService
     {
-        private IBistRepository _bistRepo;
         private IWebParser _webParser;
-        private IStockRepository _stockRepo;
+        private IStockService _stockService;
         public List<StockDto> stocks;
 
-        public ICustomLogger _logger { get; }
+        //public ICustomLogger _logger { get; }
 
-        public ParserService(IWebParser webParser, IBistRepository bistRepo, IStockRepository stockRepo, ICustomLogger logger)
+        public ParserService(IWebParser webParser, IStockService stockService)
         {
-            _bistRepo = bistRepo;
             _webParser = webParser;
-            _stockRepo = stockRepo;
-            _logger = logger;
+            _stockService = stockService;
+            //_logger = logger;
         }
 
         public async Task<ServiceResult> InsertStockData()
         {
-
             var infoMessage = "";
             var errorMessage = "";
-            var lastBistRecord = await _bistRepo.GetTodaysRecordFromStocks();
-            if (lastBistRecord == null)
+            var lastBistRecord = await _stockService.GetStock(DateTime.UtcNow.Date,"ISCTR");
+            if (lastBistRecord.Entity == null)
             {
                 var stocksResult = await _webParser.GetStockData();
                 if (stocksResult.Status != ServiceStatus.Ok)
@@ -38,7 +37,7 @@ namespace StockParser.Data
                 }
                 else
                 {
-                    var bistResult = await _bistRepo.InsertToBIST(stocksResult.Entity);
+                    var bistResult = await _stockService.InsertToStocks(stocksResult.Entity);
                     if (bistResult.Status == ServiceStatus.Error)
                     {
                         errorMessage += bistResult.Message;
@@ -53,31 +52,7 @@ namespace StockParser.Data
             {
                 infoMessage += "Bist data has already been inserted. ";
             }
-            var lastStockRecord = await _stockRepo.GetTodaysRecordFromStocks();
-            if (lastStockRecord == null)
-            {
-                var stocksResult = await _webParser.GetStockData();
-                if (stocksResult.Status != ServiceStatus.Ok)
-                {
-                    errorMessage += stocksResult.Message;
-                }
-                else
-                {
-                    var stockResult = await _stockRepo.InsertToStocks(stocksResult.Entity);
-                    if (stockResult.Status == ServiceStatus.Error)
-                    {
-                        errorMessage += stockResult.Message;
-                    }
-                    else
-                    {
-                        infoMessage += "Stock data inserted";
-                    }
-                }
-            }
-            else
-            {
-                infoMessage += "Stock data has already been inserted";
-            }
+
             if (!string.IsNullOrEmpty(errorMessage))
             {
                 return new ServiceResult(ServiceStatus.Error, errorMessage);
