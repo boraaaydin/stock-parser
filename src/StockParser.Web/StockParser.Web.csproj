@@ -20,9 +20,8 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\StockParser.Data\StockParser.Data.csproj" />
-    <ProjectReference Include="..\..\StockParser.Domain\StockParser.Domain.csproj" />
-    <ProjectReference Include="..\..\StockParser.NoSql\StockParser.NoSql.csproj" />
+    <ProjectReference Include="..\StockParser.Data\StockParser.Data.csproj" />
+    <ProjectReference Include="..\StockParser.NoSql\StockParser.NoSql.csproj" />
   </ItemGroup>
 
 </Project>
