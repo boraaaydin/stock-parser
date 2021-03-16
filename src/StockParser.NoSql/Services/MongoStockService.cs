@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StockParser.NoSql.Services
 {
-    public class MongoStockService : BaseMongoRepository<BistStockList>, IStockService
+    public class MongoStockService : MongoStockRepository, IStockService
     {
         private IStockRepository _stockRepo;
 

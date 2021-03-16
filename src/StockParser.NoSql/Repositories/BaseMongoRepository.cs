@@ -9,12 +9,11 @@ namespace StockParser.NoSql
     {
         public readonly IMongoCollection<T> _entities;
 
-        public BaseMongoRepository(IMongoDatabaseSettings settings)
+        public BaseMongoRepository(IMongoDatabaseSettings settings, string collectionName)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
-
-            _entities = database.GetCollection<T>(settings.CollectionName);
+            _entities = database.GetCollection<T>(collectionName);
         }
 
         public async Task<List<T>> Get() =>

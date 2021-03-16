@@ -13,7 +13,7 @@ namespace StockParser.NoSql
 {
     public class MongoStockRepository : BaseMongoRepository<BistStockList>, IStockRepository
     {
-        public MongoStockRepository(IMongoDatabaseSettings settings) : base(settings)
+        public MongoStockRepository(IMongoDatabaseSettings settings) : base(settings, "Stocks")
         {
         }
 
