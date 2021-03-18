@@ -8,7 +8,7 @@ namespace StockParser.NoSql.Models
 {
     public static class BistStockMapper
     {
-        public static  BistStock ConvertToBistStock(this IBistStock stock)
+        public static BistStock ConvertToBistStock(this BistStockDto stock)
         {
             return new BistStock
             {
@@ -24,9 +24,9 @@ namespace StockParser.NoSql.Models
             };
         }
 
-        public static List<IBistStock> ConvertToList(this BistStockList stockList)
+        public static List<BistStockDto> ConvertToList(this BistStockList stockList)
         {
-            return stockList?.BistStocks.Select(stock => new IBistStock {
+            return stockList?.BistStocks.Select(stock => new BistStockDto {
                 StockName = stock.StockName,
                 DailyChange = stock.DailyChange,
                 AveragePrice = stock.AveragePrice,

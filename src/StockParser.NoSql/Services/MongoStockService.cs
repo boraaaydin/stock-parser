@@ -9,21 +9,21 @@ using System.Threading.Tasks;
 
 namespace StockParser.NoSql.Services
 {
-    public class MongoStockService : MongoStockRepository, IStockService
+    public class MongoStockService : IStockService
     {
-        private IStockRepository _stockRepo;
+        private MongoStockRepository _stockRepo;
 
-        public MongoStockService(IStockRepository stockRepo, IMongoDatabaseSettings settings):base(settings)
+        public MongoStockService(MongoStockRepository stockRepo)
         {
             _stockRepo = stockRepo;
         }
 
-        public async  Task<ServiceResult<IBistStock>> GetStock(DateTime date, string stockName)
+        public async  Task<ServiceResult<BistStockDto>> GetStock(DateTime date, string stockName)
         {
             try
             {
                 var stockList = await _stockRepo.GetStockByDate(date);
-                return new ServiceResultOk<IBistStock>(stockList?.FirstOrDefault());
+                return new ServiceResultOk<BistStockDto>(stockList?.FirstOrDefault());
             }
             catch (Exception ex)
             {
@@ -31,7 +31,7 @@ namespace StockParser.NoSql.Services
             }
         }
 
-        public async Task<ServiceResult> InsertToStocks(HashSet<IBistStock> list)
+        public async Task<ServiceResult> InsertToStocks(HashSet<BistStockDto> list)
         {
             var date = list.FirstOrDefault().Date;
             var entity = new BistStockList
@@ -39,7 +39,7 @@ namespace StockParser.NoSql.Services
                 Date = date,
                 BistStocks = list.Select(x => x.ConvertToBistStock())
             };
-            var result = await this.Create(entity);
+            var result = await _stockRepo.Create(entity);
             if (result != null)
             {
                 return new ServiceResult(ServiceStatus.Created);

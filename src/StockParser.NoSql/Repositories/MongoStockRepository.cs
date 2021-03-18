@@ -17,7 +17,7 @@ namespace StockParser.NoSql
         {
         }
 
-        public async Task<List<IBistStock>> GetStockByDate(DateTime date)
+        public async Task<List<BistStockDto>> GetStockByDate(DateTime date)
         {
             //return  await _entities.FindAsync<BistStockList>(entity => entity.Date == date);
             //var filter= Builders.Filter<BistStockList>.Eq(x=>x.);

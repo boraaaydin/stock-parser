@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StockParser.Domain.Models
 {
-    public class IBistStock
+    public class BistStockDto
     {
         public string StockName { get; set; }
         public decimal FinalPrice { get; set; }

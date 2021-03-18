@@ -8,7 +8,7 @@ namespace StockParser.Domain.Services
 {
     public interface IStockService
     {
-        Task<ServiceResult> InsertToStocks(HashSet<IBistStock> list);
-        Task<ServiceResult<IBistStock>> GetStock(DateTime date, String stockName);
+        Task<ServiceResult> InsertToStocks(HashSet<BistStockDto> list);
+        Task<ServiceResult<BistStockDto>> GetStock(DateTime date, String stockName);
     }
 }

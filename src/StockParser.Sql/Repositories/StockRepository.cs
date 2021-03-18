@@ -86,7 +86,7 @@ namespace StockParser.Sql.Repositories
             return new ServiceResult(ServiceStatus.Ok);
         }
 
-        Task<List<IBistStock>> IStockRepository.GetStockByDate(DateTime date)
+        Task<List<BistStockDto>> IStockRepository.GetStockByDate(DateTime date)
         {
             throw new NotImplementedException();
         }

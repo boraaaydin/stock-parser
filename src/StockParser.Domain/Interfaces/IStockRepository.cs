@@ -12,6 +12,6 @@ namespace StockParser.Domain
         //Task<ServiceResult> InsertToStocks(HashSet<StockDto> list);
         //Task<StockDto> GetTodaysRecordFromStocks(string stockName);
         //Task<IEnumerable<StockDto>> GetTodaysRecordsFromStocks();
-        Task<List<IBistStock>> GetStockByDate(DateTime date);
+        Task<List<BistStockDto>> GetStockByDate(DateTime date);
     }
 }

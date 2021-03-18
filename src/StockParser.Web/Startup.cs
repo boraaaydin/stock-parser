@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using StockParser.NoSql.Services;
 using StockParser.Domain.Services;
 using StockParser.Data;
+using StockParser.NoSql.Repositories;
 
 namespace StockParser.Web
 {
@@ -53,7 +54,9 @@ namespace StockParser.Web
                 sp.GetRequiredService<IOptions<MongoDatabaseSettings>>().Value);
 
             services.AddScoped<IStockService, MongoStockService>();
-            services.AddScoped<IStockRepository, MongoStockRepository>();
+            services.AddScoped<MongoStockRepository>();
+            services.AddScoped<MongoProfileRepository>();
+            services.AddScoped<MongoProfileService>();
             services.AddScoped<IWebParser, BigParaParser>();
             services.AddScoped<ParserService>();
             //services.AddScoped<ICustomLogger, LogHelper>();

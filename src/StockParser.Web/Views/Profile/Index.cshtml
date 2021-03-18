@@ -1,0 +1,33 @@
+﻿@model StockParser.Domain.Dto.ProfileDto
+
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>Profil</h4>
+<hr />
+@Html.ActionLink("Stock Ekle","InsertOwning","Profile")
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="View">
+            @foreach(var stock in Model.Ownings)
+            {
+            <div class="form-group">
+                <label class="control-label">@stock.Name</label>
+                <text class="control-label">@stock.PurchaseValue</text>
+    
+                @*<span asp-validation-for="UserId" class="text-danger"></span>*@
+            </div>
+            }
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
