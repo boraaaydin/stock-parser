@@ -24,21 +24,23 @@ namespace StockParser.NoSql.Repositories
 
         public async Task<Profile> AddOrUpdateRules(Guid userId, List<Rule> newRules)
         {
-            var userRules = await GetByUserId(userId);
-            if (userRules == null)
+            var profile = await GetByUserId(userId);
+            if (profile == null)
             {
                 var entity = new Profile
                 {
                     UserId = userId,
-                    Rules = newRules
+                    Rules = newRules,
+                    Ownings = new List<Owning>()
                 };
                 await _entities.InsertOneAsync(entity);
                 return entity;
             }
             else
             {
-                userRules.Rules = newRules;
-                return userRules;
+                profile.Rules = newRules;
+                await Update(profile.Id, profile);
+                return profile;
             }
         }
 

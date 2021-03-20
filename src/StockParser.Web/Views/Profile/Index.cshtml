@@ -2,28 +2,51 @@
 
 @{
     ViewData["Title"] = "View";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout_LTE.cshtml";
 }
 
-<h4>Profil</h4>
-<hr />
-@Html.ActionLink("Stock Ekle","InsertOwning","Profile")
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="View">
-            @foreach(var stock in Model.Ownings)
-            {
-            <div class="form-group">
-                <label class="control-label">@stock.Name</label>
-                <text class="control-label">@stock.PurchaseValue</text>
-    
-                @*<span asp-validation-for="UserId" class="text-danger"></span>*@
-            </div>
-            }
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+
+@Html.ActionLink("Stock Ekle", "InsertOwning", "Profile")
+
+<div class="card">
+    <div class="card-header border-0">
+        <h3 class="card-title">Products</h3>
+        <div class="card-tools">
+            <a href="#" class="btn btn-tool btn-sm">
+                <i class="fas fa-download"></i>
+            </a>
+            <a href="#" class="btn btn-tool btn-sm">
+                <i class="fas fa-bars"></i>
+            </a>
+        </div>
+    </div>
+    <div class="card-body table-responsive p-0">
+        <table class="table table-striped table-valign-middle">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Value</th>
+                    <th>Quantity</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stock in Model.Ownings)
+                {
+                    <tr>
+                        <td>
+                            <img src="~/dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
+                            @stock.Name
+                        </td>
+                        <td>@stock.PurchaseValue</td>
+                        <td>@stock.PurchaseQuantity</td>
+                        <td>
+                            @stock.PurchaseDate
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
