@@ -4,52 +4,64 @@
     ViewData["Title"] = "View";
     Layout = "~/Views/Shared/_Layout_LTE.cshtml";
 }
-
-
-@Html.ActionLink("Stock Ekle", "InsertOwning", "Profile")
-
-<div class="card">
-    <div class="card-header border-0">
-        <h3 class="card-title">Products</h3>
-        <div class="card-tools">
-            <a href="#" class="btn btn-tool btn-sm">
-                <i class="fas fa-download"></i>
-            </a>
-            <a href="#" class="btn btn-tool btn-sm">
-                <i class="fas fa-bars"></i>
-            </a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Products</h3>
+                    <div class="card-tools">
+                        <a href="~/profile/insertowning" class="btn btn-tool btn-sm">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                        <a href="#" class="btn btn-tool btn-sm">
+                            <i class="fas fa-bars"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-valign-middle">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Value</th>
+                                <th>Quantity</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var stock in Model.Ownings)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="~/dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
+                                        @stock.Name
+                                    </td>
+                                    <td>
+                                        @stock.PurchaseValue
+                                    </td>
+                                    <td>
+                                        @stock.PurchaseQuantity
+                                    </td>
+                                    <td>
+                                        @stock.PurchaseDate.Date
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="card-body table-responsive p-0">
-        <table class="table table-striped table-valign-middle">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Value</th>
-                    <th>Quantity</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var stock in Model.Ownings)
-                {
-                    <tr>
-                        <td>
-                            <img src="~/dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                            @stock.Name
-                        </td>
-                        <td>@stock.PurchaseValue</td>
-                        <td>@stock.PurchaseQuantity</td>
-                        <td>
-                            @stock.PurchaseDate
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+        <!-- /.col-md-6 -->
+        <div class="col-lg-6">
+            <!-- /.card -->
 
+        </div>
+        <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+</div>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
