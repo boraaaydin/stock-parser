@@ -5,44 +5,42 @@
     Layout = "~/Views/Shared/_Layout_LTE.cshtml";
 }
 
-<h1>InsertOwning</h1>
+<h1>Ürün ekle</h1>
 
-<h4>OwningDto</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="InsertOwning">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label class="control-label">Adı</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PurchaseValue" class="control-label"></label>
+                <label class="control-label">Değeri</label>
                 <input asp-for="PurchaseValue" class="form-control" />
                 <span asp-validation-for="PurchaseValue" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PurchaseCommission" class="control-label"></label>
+            @*<div class="form-group">
+                <label class="control-label"></label>
                 <input asp-for="PurchaseCommission" class="form-control" />
                 <span asp-validation-for="PurchaseCommission" class="text-danger"></span>
-            </div>
-            @*<div class="form-group">
-                <label asp-for="PurchaseDate" class="control-label"></label>
-                <input asp-for="PurchaseDate" class="form-control" />
-                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
             </div>*@
             <div class="form-group">
-                <label asp-for="PurchaseQuantity" class="control-label"></label>
+                <label class="control-label">Satınalma Tarihi</label>
+                <input asp-for="PurchaseDate" type="date" class="form-control" />
+                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Miktar</label>
                 <input asp-for="PurchaseQuantity" class="form-control" />
                 <span asp-validation-for="PurchaseQuantity" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
+            @*<div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="IsSold" /> @Html.DisplayNameFor(model => model.IsSold)
                 </label>
-            </div>
+            </div>*@
             @*<div class="form-group">
                 <label asp-for="SellValue" class="control-label"></label>
                 <input asp-for="SellValue" class="form-control" />

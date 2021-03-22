@@ -25,7 +25,8 @@ namespace StockParser.Web.Controllers
 
         public IActionResult InsertOwning()
         {
-            return View();
+            var dto = new OwningDto { PurchaseDate = DateTime.UtcNow.Date };
+            return View(dto);
         }
 
         [HttpPost]
