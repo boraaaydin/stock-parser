@@ -22,14 +22,19 @@ namespace StockParser.Domain.Dto
         public int PurchaseQuantity { get; set; }
         public bool IsSold { get; set; }
         public decimal SellValue { get; set; }
+        public decimal? CurrentValue { get; set; }
         public decimal SellCommission { get; set; }
         public DateTime SellDate { get; set; }
         public int SellQuantity { get; set; }
+        public decimal? Profit { get; set; }
     }
     public class RuleDto
     {
         public string Name { get; set; }
-        public string Value { get; set; }
-        public RuleMode Mode { get; set; }
+        public decimal? PurchaseValue { get; set; }
+        public decimal? SellValue { get; set; }
+        //public RuleMode Mode { get; set; }
+        public decimal? Percentage { get; set; }
+        public decimal? CurrentValue { get; set; }
     }
 }

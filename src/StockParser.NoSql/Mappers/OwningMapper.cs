@@ -1,20 +1,22 @@
 ﻿using StockParser.Domain.Dto;
+using StockParser.Domain.Models;
 using StockParser.NoSql.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace StockParser.NoSql.Models
 {
     public static class OwningMapper
     {
-        public static List<OwningDto> ConvertToDtoList(this List<Owning> ownings)
+        public static List<OwningDto> ConvertToDtoList(this List<Owning> ownings, List<BistStockDto> bist)
         {
             var owningDtos = new List<OwningDto>();
-            ownings.ForEach(x => owningDtos.Add(x.ConvertToDto()));
+            ownings.ForEach(x => owningDtos.Add(x.ConvertToDto(bist)));
             return owningDtos;
         }
-        public static OwningDto ConvertToDto(this Owning owning)
+        public static OwningDto ConvertToDto(this Owning owning, List<BistStockDto> bist)
         {
             return new OwningDto
             {
@@ -27,10 +29,25 @@ namespace StockParser.NoSql.Models
                 IsSold = owning.IsSold,
                 PurchaseCommission = owning.PurchaseCommission,
                 PurchaseQuantity = owning.PurchaseQuantity,
-                PurchaseValue = owning.PurchaseValue
+                PurchaseValue = owning.PurchaseValue,
+                CurrentValue = bist.FirstOrDefault(x => x.StockName == owning.Name)?.FinalPrice,
+                Profit = CalculateProfit(owning,bist)
             };
         }
+
+        private static decimal? CalculateProfit(Owning owning, List<BistStockDto> bist)
+        {
+            var stock = bist.FirstOrDefault(x => x.StockName == owning.Name);
+            if (stock != null)
+            {
+                var currentValue = stock.FinalPrice;
+                var purchaseValue = owning.PurchaseValue;
+                return owning.PurchaseQuantity * (currentValue - purchaseValue);
+            }
+            return null;
+        }
     }
+
 
     public static class OwningDtoMapper
     {

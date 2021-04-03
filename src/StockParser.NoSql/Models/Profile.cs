@@ -29,8 +29,8 @@ namespace StockParser.NoSql.Models
     public class Rule
     {
         public string Name { get; set; }
-        public string Value { get; set; }
-        public RuleMode Mode { get; set; }
+        public decimal? PurchaseValue { get; set; }
+        public decimal? SellValue { get; set; }
     }
 
 }

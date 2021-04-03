@@ -8,6 +8,6 @@ namespace StockParser.Data.WebParser
 {
     public interface IWebParser
     {
-        Task<ServiceResult<HashSet<BistStockDto>>> GetStockData();
+        Task<ServiceResult<List<BistStockDto>>> GetStockData();
     }
 }

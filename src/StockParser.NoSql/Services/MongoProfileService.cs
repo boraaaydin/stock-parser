@@ -46,5 +46,13 @@ namespace StockParser.NoSql.Services
             await _repo.Update(profile.Id, profile);
             return profile;
         }
+
+        public async Task<Profile> InsertRule(Guid userId, RuleDto rule)
+        {
+            var profile = await _repo.GetByUserId(userId);
+            profile.Rules.Add(rule.Convert());
+            await _repo.Update(profile.Id, profile);
+            return profile;
+        }
     }
 }

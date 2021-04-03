@@ -54,11 +54,14 @@ namespace StockParser.Web
                 sp.GetRequiredService<IOptions<MongoDatabaseSettings>>().Value);
 
             services.AddScoped<IStockService, MongoStockService>();
-            services.AddScoped<MongoStockRepository>();
+            services.AddSingleton<MongoStockRepository>();
             services.AddScoped<MongoProfileRepository>();
             services.AddScoped<MongoProfileService>();
-            services.AddScoped<IWebParser, BigParaParser>();
+            services.AddSingleton<MongoContextService>();
+            services.AddSingleton<MongoContextRepository>();
+            services.AddSingleton<IWebParser, BigParaParser>();
             services.AddScoped<ParserService>();
+            services.AddSingleton<StockContext>();
             //services.AddScoped<ICustomLogger, LogHelper>();
 
             services.AddLogging(config =>

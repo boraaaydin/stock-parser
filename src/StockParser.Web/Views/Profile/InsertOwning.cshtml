@@ -5,6 +5,9 @@
     Layout = "~/Views/Shared/_Layout_LTE.cshtml";
 }
 
+@section Styles{
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.css" rel="stylesheet" />
+}
 <h1>Ürün ekle</h1>
 
 <div class="row">
@@ -13,7 +16,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label class="control-label">Adı</label>
-                <input asp-for="Name" class="form-control" />
+                <input id="txtStockName" asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -22,10 +25,10 @@
                 <span asp-validation-for="PurchaseValue" class="text-danger"></span>
             </div>
             @*<div class="form-group">
-                <label class="control-label"></label>
-                <input asp-for="PurchaseCommission" class="form-control" />
-                <span asp-validation-for="PurchaseCommission" class="text-danger"></span>
-            </div>*@
+                    <label class="control-label"></label>
+                    <input asp-for="PurchaseCommission" class="form-control" />
+                    <span asp-validation-for="PurchaseCommission" class="text-danger"></span>
+                </div>*@
             <div class="form-group">
                 <label class="control-label">Satınalma Tarihi</label>
                 <input asp-for="PurchaseDate" type="date" class="form-control" />
@@ -37,30 +40,30 @@
                 <span asp-validation-for="PurchaseQuantity" class="text-danger"></span>
             </div>
             @*<div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsSold" /> @Html.DisplayNameFor(model => model.IsSold)
-                </label>
-            </div>*@
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="IsSold" /> @Html.DisplayNameFor(model => model.IsSold)
+                    </label>
+                </div>*@
             @*<div class="form-group">
-                <label asp-for="SellValue" class="control-label"></label>
-                <input asp-for="SellValue" class="form-control" />
-                <span asp-validation-for="SellValue" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SellCommission" class="control-label"></label>
-                <input asp-for="SellCommission" class="form-control" />
-                <span asp-validation-for="SellCommission" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SellDate" class="control-label"></label>
-                <input asp-for="SellDate" class="form-control" />
-                <span asp-validation-for="SellDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SellQuantity" class="control-label"></label>
-                <input asp-for="SellQuantity" class="form-control" />
-                <span asp-validation-for="SellQuantity" class="text-danger"></span>
-            </div>*@
+                    <label asp-for="SellValue" class="control-label"></label>
+                    <input asp-for="SellValue" class="form-control" />
+                    <span asp-validation-for="SellValue" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SellCommission" class="control-label"></label>
+                    <input asp-for="SellCommission" class="form-control" />
+                    <span asp-validation-for="SellCommission" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SellDate" class="control-label"></label>
+                    <input asp-for="SellDate" class="form-control" />
+                    <span asp-validation-for="SellDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SellQuantity" class="control-label"></label>
+                    <input asp-for="SellQuantity" class="form-control" />
+                    <span asp-validation-for="SellQuantity" class="text-danger"></span>
+                </div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -72,3 +75,10 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts
+{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+            crossorigin="anonymous"></script>
+    <script src="~/js/insert-page.js"></script>
+}

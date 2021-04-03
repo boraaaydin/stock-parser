@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <link href="~/css/main.css" rel="stylesheet" />
+
+    @RenderSection("Styles", false/*required*/)
 </head>
 <!--
 `body` tag options:
@@ -67,7 +70,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Dashboard v3</h1>
+                            @*<h1 class="m-0">Dashboard v3</h1>*@
                         </div><!-- /.col -->
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
@@ -116,5 +119,6 @@
     <script src="~/dist/js/demo.js"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="~/dist/js/pages/dashboard3.js"></script>
+    @RenderSection("Scripts", false/*required*/)
 </body>
 </html>

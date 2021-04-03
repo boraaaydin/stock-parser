@@ -10,16 +10,16 @@ namespace StockParser.Data
 {
     public class ParserService
     {
-        private IWebParser _webParser;
         private IStockService _stockService;
+        private StockContext _stockContext;
         public List<StockDto> stocks;
 
         //public ICustomLogger _logger { get; }
 
-        public ParserService(IWebParser webParser, IStockService stockService)
+        public ParserService(IStockService stockService, StockContext stockContext)
         {
-            _webParser = webParser;
             _stockService = stockService;
+            _stockContext = stockContext;
             //_logger = logger;
         }
 
@@ -30,14 +30,7 @@ namespace StockParser.Data
             var lastBistRecord = await _stockService.GetStock(DateTime.UtcNow.Date,"ISCTR");
             if (lastBistRecord.Entity == null)
             {
-                var stocksResult = await _webParser.GetStockData();
-                if (stocksResult.Status != ServiceStatus.Ok)
-                {
-                    errorMessage += stocksResult.Message;
-                }
-                else
-                {
-                    var bistResult = await _stockService.InsertToStocks(stocksResult.Entity);
+                    var bistResult = await _stockService.InsertToStocks(await _stockContext.GetBist());
                     if (bistResult.Status == ServiceStatus.Error)
                     {
                         errorMessage += bistResult.Message;
@@ -46,7 +39,6 @@ namespace StockParser.Data
                     {
                         infoMessage += "Bist data inserted";
                     }
-                }
             }
             else
             {

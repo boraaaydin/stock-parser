@@ -28,6 +28,12 @@ namespace StockParser.NoSql
             return entity;
         }
 
+        public async Task<IEnumerable<T>> CreateMany(IEnumerable<T> entityList)
+        {
+            await _entities.InsertManyAsync(entityList);
+            return entityList;
+        }
+
         public async Task Update(string id, T entityIn) =>
             await _entities.ReplaceOneAsync(entity => entity.Id == id, entityIn);
 

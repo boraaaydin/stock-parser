@@ -31,7 +31,7 @@ namespace StockParser.NoSql.Services
             }
         }
 
-        public async Task<ServiceResult> InsertToStocks(HashSet<BistStockDto> list)
+        public async Task<ServiceResult> InsertToStocks(List<BistStockDto> list)
         {
             var date = list.FirstOrDefault().Date;
             var entity = new BistStockList

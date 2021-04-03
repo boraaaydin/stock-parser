@@ -18,18 +18,18 @@ namespace StockParser.Data.WebParser
         {
             //_logger = logger;
         }
-        private HashSet<BistStockDto> StockData;
+        private List<BistStockDto> StockData;
 
         //public ICustomLogger _logger { get; }
 
-        public async Task<ServiceResult<HashSet<BistStockDto>>> GetStockData()
+        public async Task<ServiceResult<List<BistStockDto>>> GetStockData()
         {
             try
             {
                 //_logger.LogInformation("GetStockData function called");
                 if (StockData == null)
                 {
-                    StockData = new HashSet<BistStockDto>();
+                    StockData = new List<BistStockDto>();
                     var mainUrl = "http://push.bigpara.com/borsa/hisse-fiyatlari/";
                     var letterlist = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V", "Y", "Z" };
                     var taskList = new List<Task<HashSet<BistStockDto>>>();
@@ -47,18 +47,18 @@ namespace StockParser.Data.WebParser
                         var stocks = await task;
                         if (stocks != null && stocks.Count != 0)
                         {
-                            StockData.UnionWith(stocks);
+                            StockData.AddRange(stocks);
                         }
                         //_logger.LogTrace($"{stocks.Count} stocks parsed starting with {letterlist[index]} ");
                     }
                     //_logger.LogTrace($"Total {StockData.Count} stocks parsed");
                 }
-                return new ServiceResult<HashSet<BistStockDto>>(ServiceStatus.Ok, StockData);
+                return new ServiceResult<List<BistStockDto>>(ServiceStatus.Ok, StockData);
             }
             catch (Exception ex)
             {
                 //_logger.LogError("GetStockData:"+ex.Message);
-                return new ServiceResult<HashSet<BistStockDto>>(ServiceStatus.Error, null,"GetStockData hata: "+ex.Message);
+                return new ServiceResult<List<BistStockDto>>(ServiceStatus.Error, null,"GetStockData hata: "+ex.Message);
             }
 
         }

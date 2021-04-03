@@ -1,41 +1,22 @@
 ﻿using StockParser.Domain.Dto;
-using StockParser.NoSql.Models;
+using StockParser.Domain.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StockParser.NoSql.Models
 {
     public static class ProfileMapper
     {
-        public static ProfileDto ConvertToDto(this Profile profile)
+        public static ProfileDto ConvertToDto(this Profile profile, List<BistStockDto> bist)
         {
             return new ProfileDto
             {
                 Id= profile.Id,
                 UserId=profile.UserId,
-                Rules = profile.Rules.ConvertToDtoList(),
-                Ownings =profile.Ownings.ConvertToDtoList()
+                Rules = profile.Rules.ConvertToDtoList(bist).OrderByDescending(x=>x.Percentage).ToList(),
+                Ownings =profile.Ownings.ConvertToDtoList(bist)
             };
         }
     }
 
-    public static class RuleMapper
-    {
-        public static List<RuleDto> ConvertToDtoList(this List<Rule> rules)
-        {
-            var rulesDto = new List<RuleDto>();
-            rules.ForEach(x => rulesDto.Add(x.ConvertToDto()));
-            return rulesDto;
-        }
-        public static RuleDto ConvertToDto(this Rule rule)
-        {
-            return new RuleDto
-            {
-                Mode=rule.Mode,
-                Name=rule.Name,
-                Value=rule.Value
-            };
-        }
-    }
-
-   
 }

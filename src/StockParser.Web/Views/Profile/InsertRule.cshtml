@@ -1,0 +1,48 @@
+﻿@model StockParser.Domain.Dto.RuleDto
+
+@{
+    ViewData["Title"] = "InsertRule";
+    Layout = "~/Views/Shared/_Layout_LTE.cshtml";
+}
+
+@section Styles{
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.css" rel="stylesheet" />
+}
+<h1>Kural ekle</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="InsertRule">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label">Adı</label>
+                <input id="txtStockName" asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Alış Değeri</label>
+                <input asp-for="PurchaseValue" class="form-control" />
+                <span asp-validation-for="PurchaseValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Satış Değeri</label>
+                <input asp-for="SellValue" class="form-control" />
+                <span asp-validation-for="SellValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+            crossorigin="anonymous"></script>
+    <script src="~/js/insert-page.js"></script>
+} 
