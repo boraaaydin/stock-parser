@@ -47,6 +47,9 @@
                                 <td>
                                     @stock.Profit
                                 </td>
+                                <td>
+                                    @Html.ActionLink("Sat","SellOwning","Profile",new {name=stock.Name,quantity=stock.PurchaseQuantity})
+                                </td>
                             </tr>
                             }
                         </tbody>

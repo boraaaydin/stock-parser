@@ -1,0 +1,54 @@
+﻿@model StockParser.Domain.Dto.OwningDto
+
+@{
+    ViewData["Title"] = "SellOwning";
+    Layout = "~/Views/Shared/_Layout_LTE.cshtml";
+}
+
+@section Styles{
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.css" rel="stylesheet" />
+}
+<h1>Ürün sat</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SellOwning">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label">Adı</label>
+                <input id="txtStockName" asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Değeri</label>
+                <input asp-for="SellValue" class="form-control" />
+                <span asp-validation-for="SellValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Satış Tarihi</label>
+                <input asp-for="SellDate" type="date" class="form-control" />
+                <span asp-validation-for="SellDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Miktar</label>
+                <input asp-for="SellQuantity" class="form-control" />
+                <span asp-validation-for="SellQuantity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Sat" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts
+{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+            crossorigin="anonymous"></script>
+    <script src="~/js/insert-page.js"></script>
+}

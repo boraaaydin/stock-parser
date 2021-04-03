@@ -20,6 +20,11 @@ namespace StockParser.Data
         private IWebParser _webParser;
         private MongoContextService _contextService;
 
+        public async Task<BistStockDto> GetByName(string name)
+        {
+            return (await GetBist()).FirstOrDefault(x => x.StockName == name);
+        }
+
         public async Task<List<BistStockDto>> GetBist()
         {
             if (_Bist == null)

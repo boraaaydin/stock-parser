@@ -54,5 +54,10 @@ namespace StockParser.NoSql.Services
             await _repo.Update(profile.Id, profile);
             return profile;
         }
+
+        public Task SellOwning(Guid userId, OwningDto owning)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
