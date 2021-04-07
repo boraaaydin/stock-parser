@@ -40,7 +40,7 @@ namespace StockParser.Web.Controllers
             var stock = await StockContext.GetByName(name);
             var dto = new OwningDto
             {
-                SellQuantity = quantity,
+                PurchaseQuantity = quantity,
                 Name = name,
                 SellDate = DateTime.UtcNow,
                 CurrentValue=stock?.FinalPrice

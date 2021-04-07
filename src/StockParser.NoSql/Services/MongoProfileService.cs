@@ -3,6 +3,7 @@ using StockParser.NoSql.Models;
 using StockParser.NoSql.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace StockParser.NoSql.Services
@@ -55,9 +56,59 @@ namespace StockParser.NoSql.Services
             return profile;
         }
 
-        public Task SellOwning(Guid userId, OwningDto owning)
+        public async Task SellOwning(Guid userId, OwningDto owning)
         {
-            throw new NotImplementedException();
+            var profile = await _repo.GetByUserId(userId);
+            SellFromOwning(profile, owning);
+            await _repo.Update(profile.Id, profile);
         }
+
+        public void SellFromOwning(Profile profile, OwningDto soldOwning)
+        {
+            bool isFirst = true;
+            int totalOwningCount = 0;
+            var ownings = profile.Ownings.Where(x => x.Name == soldOwning.Name).OrderBy(x => x.PurchaseDate).ToList();
+            ownings.ForEach(x => totalOwningCount += x.PurchaseQuantity);
+            if (totalOwningCount < soldOwning.PurchaseQuantity)
+            {
+                throw new Exception("Sahip olunandan daha fazla satış yapılamaz");
+            }
+            var soldOwnings = new List<Owning>();
+            Owning remainingOwning = null;
+            var remainingOwningList = new List<Owning>();
+            int remainingQuantity= soldOwning.PurchaseQuantity;
+            foreach(var owning in ownings)
+            {
+                if (owning.PurchaseQuantity <= remainingQuantity)
+                {
+                    owning.SellDate = soldOwning.SellDate;
+                    owning.SellValue = soldOwning.SellValue;
+                    remainingQuantity -= owning.PurchaseQuantity;
+                    soldOwnings.Add(owning);
+                }
+                else
+                {
+                    if (isFirst)
+                    {
+                        remainingOwning = (Owning)owning.Clone();
+                        remainingOwning.PurchaseQuantity -= remainingQuantity;
+                        remainingOwningList.Add(remainingOwning);
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        remainingOwningList.Add(owning);
+                    }
+                }
+            }
+
+            profile.Ownings.RemoveAll(x => x.Name == soldOwning.Name);
+            if (remainingOwningList.Count>0)
+            {
+                profile.Ownings.AddRange(remainingOwningList);
+            }
+            profile.Solds.AddRange(soldOwnings);
+        }
+
     }
 }
