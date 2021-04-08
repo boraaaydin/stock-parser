@@ -1,28 +1,25 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using StockParser.Data;
+using StockParser.Data.WebParser;
+using StockParser.Domain.Services;
+using StockParser.NoSql;
+using StockParser.NoSql.Models;
+using StockParser.NoSql.Repositories;
+using StockParser.NoSql.Services;
+using StockParser.Web.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
-using StockParser.Web.Data;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using StockParser.Domain;
-using StockParser.NoSql;
-using StockParser.NoSql.Models;
-using Microsoft.Extensions.Options;
-using StockParser.Data.WebParser;
-//using StockParser.Web.Helpers;
-using Microsoft.Extensions.Logging;
-using StockParser.NoSql.Services;
-using StockParser.Domain.Services;
-using StockParser.Data;
-using StockParser.NoSql.Repositories;
 
 namespace StockParser.Web
 {
@@ -41,15 +38,14 @@ namespace StockParser.Web
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDatabaseDeveloperPageExceptionFilter();
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews().AddRazorRuntimeCompilation(); 
-            services.AddRazorPages();
+            services.AddControllersWithViews();
 
-            // requires using Microsoft.Extensions.Options
             services.Configure<MongoDatabaseSettings>(
                 Configuration.GetSection(nameof(MongoDatabaseSettings)));
-
             services.AddSingleton<IMongoDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoDatabaseSettings>>().Value);
 
@@ -62,13 +58,11 @@ namespace StockParser.Web
             services.AddSingleton<IWebParser, BigParaParser>();
             services.AddScoped<ParserService>();
             services.AddSingleton<StockContext>();
+            services.AddSingleton<CollectApiService>();
             //services.AddScoped<ICustomLogger, LogHelper>();
 
-            services.AddLogging(config =>
-            {
-                config.AddDebug();
-                config.AddConsole();
-            });
+    
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,7 +71,7 @@ namespace StockParser.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {

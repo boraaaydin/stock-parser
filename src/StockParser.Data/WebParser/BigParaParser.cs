@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using Microsoft.Extensions.Logging;
 using StockParser.Common;
 using StockParser.Domain;
 using StockParser.Domain.Models;

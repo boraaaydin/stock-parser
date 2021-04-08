@@ -30,7 +30,7 @@ namespace StockParser.Data.Test
             };
     }
 
-    public class UnitTest1
+    public class SellFromOwning
     {
         const string StockName = "ISCTR";
         Profile profileWith_8_2 = new Profile()

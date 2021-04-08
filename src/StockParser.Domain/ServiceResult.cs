@@ -36,9 +36,9 @@ namespace StockParser.Domain
         }
     }
 
-    public class ServiceResultOk: ServiceResult
+    public class ServiceResultOk : ServiceResult
     {
-        public ServiceResultOk():base(ServiceStatus.Ok)
+        public ServiceResultOk() : base(ServiceStatus.Ok)
         {
         }
     }

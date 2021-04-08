@@ -1,25 +1,29 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using StockParser.Data;
+using StockParser.Web.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using StockParser.Web.Models;
 
 namespace StockParser.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly CollectApiService _collectApiService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, CollectApiService collectApiService)
         {
             _logger = logger;
+            _collectApiService = collectApiService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+             //await _collectApiService.GetCurrency();
             return View();
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Web.Http;
 using Microsoft.AspNetCore.Mvc;
 using StockParser.Data;
 using StockParser.Domain.Dto;
@@ -35,7 +34,7 @@ namespace StockParser.Web.Controllers
             return View(dto);
         }
 
-        public async Task<IActionResult> SellOwning([FromUri]string name, [FromUri] int quantity)
+        public async Task<IActionResult> SellOwning([FromQuery]string name, [FromQuery] int quantity)
         {
             var stock = await StockContext.GetByName(name);
             var dto = new OwningDto
