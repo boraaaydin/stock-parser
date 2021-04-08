@@ -18,10 +18,10 @@ namespace StockParser.NoSql
         {
         }
 
-        public async Task InsertFromContext(List<StockGroup> groups)
-        {
-            await CreateMany(groups);
-        }
+        //public async Task InsertFromContext(List<StockGroup> groups)
+        //{
+        //    await CreateMany(groups);
+        //}
 
         public async Task<List<StockGroup>> GetStockNameValue()
         {

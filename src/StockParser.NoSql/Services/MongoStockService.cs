@@ -1,15 +1,18 @@
 ﻿using StockParser.Domain;
+using StockParser.Domain.Dto;
 using StockParser.Domain.Models;
 using StockParser.Domain.Services;
+using StockParser.NoSql.Mappers;
 using StockParser.NoSql.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace StockParser.NoSql.Services
 {
-    public class MongoStockService : IStockService
+    public class MongoStockService 
     {
         private MongoStockRepository _stockRepo;
 
@@ -31,13 +34,14 @@ namespace StockParser.NoSql.Services
             }
         }
 
-        public async Task<ServiceResult> InsertToStocks(List<BistStockDto> list)
+        public async Task<ServiceResult> InsertToStocks(List<BistStockDto> list, IEnumerable<CurrencyDto> currency)
         {
             var date = list.FirstOrDefault().Date;
             var entity = new BistStockList
             {
                 Date = date,
-                BistStocks = list.Select(x => x.ConvertToBistStock())
+                BistStocks = list.Select(x => x.ConvertToBistStock()),
+                Currency = CurrencyMapper.ConvertToCurrency(currency)
             };
             var result = await _stockRepo.Create(entity);
             if (result != null)

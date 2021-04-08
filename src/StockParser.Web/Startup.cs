@@ -49,7 +49,7 @@ namespace StockParser.Web
             services.AddSingleton<IMongoDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoDatabaseSettings>>().Value);
 
-            services.AddScoped<IStockService, MongoStockService>();
+            services.AddScoped<MongoStockService>();
             services.AddSingleton<MongoStockRepository>();
             services.AddScoped<MongoProfileRepository>();
             services.AddScoped<MongoProfileService>();

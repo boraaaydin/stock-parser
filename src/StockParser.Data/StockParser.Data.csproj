@@ -15,4 +15,8 @@
     <ProjectReference Include="..\StockParser.NoSql\StockParser.NoSql.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CollectApi\Mappers\" />
+  </ItemGroup>
+
 </Project>
