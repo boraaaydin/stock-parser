@@ -1,4 +1,5 @@
-﻿using StockParser.Data.WebParser;
+﻿using StockParser.Common;
+using StockParser.Data.WebParser;
 using StockParser.Domain;
 using StockParser.Domain.Dto;
 using StockParser.Domain.Models;

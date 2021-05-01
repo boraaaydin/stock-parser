@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using StockParser.Common;
 using StockParser.Data;
 using StockParser.Data.WebParser;
 using StockParser.Domain.Services;
@@ -59,9 +60,10 @@ namespace StockParser.Web
             services.AddScoped<ParserService>();
             services.AddSingleton<StockContext>();
             services.AddSingleton<CollectApiService>();
+            services.AddSingleton<WebService>();
             //services.AddScoped<ICustomLogger, LogHelper>();
 
-    
+
             services.AddHttpClient();
         }
 

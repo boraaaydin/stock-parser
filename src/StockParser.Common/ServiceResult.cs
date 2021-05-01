@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace StockParser.Domain
+namespace StockParser.Common
 {
     public class ServiceResult<T> : ServiceResult
     {
@@ -46,6 +46,7 @@ namespace StockParser.Domain
     public enum ServiceStatus
     {
         Ok,
+        NOk,
         Created,
         CreatedWithErrors,
         Updated,

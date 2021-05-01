@@ -1,4 +1,5 @@
-﻿using StockParser.Domain.Models;
+﻿using StockParser.Common;
+using StockParser.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

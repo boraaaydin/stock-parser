@@ -1,11 +1,9 @@
-﻿using StockParser.Domain;
+﻿using StockParser.Common;
 using StockParser.Domain.Dto;
 using StockParser.Domain.Models;
-using StockParser.Domain.Services;
 using StockParser.NoSql.Mappers;
 using StockParser.NoSql.Models;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

@@ -1,8 +1,5 @@
-﻿
-using StockParser.Domain;
-using System;
+﻿using StockParser.Common;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StockParser.Domain
