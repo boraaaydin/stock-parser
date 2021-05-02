@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StockParser.NoSql.Services
+namespace StockParser.Data.Services
 {
     public class MongoProfileService
     {

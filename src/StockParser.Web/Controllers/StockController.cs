@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using StockParser.Data;
-using StockParser.Domain.Dto;
+using StockParser.Data.Services;
 using StockParser.NoSql.Models;
-using StockParser.NoSql.Services;
 
 namespace StockParser.Web.Controllers
 {

@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\StockParser.Data\StockParser.Data.csproj" />
     <ProjectReference Include="..\..\StockParser.NoSql\StockParser.NoSql.csproj" />
   </ItemGroup>
 

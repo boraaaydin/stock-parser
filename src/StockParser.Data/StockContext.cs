@@ -1,10 +1,9 @@
 ﻿using StockParser.Common;
+using StockParser.Data.Services;
 using StockParser.Data.WebParser;
-using StockParser.Domain;
 using StockParser.Domain.Dto;
 using StockParser.Domain.Models;
 using StockParser.NoSql.Models;
-using StockParser.NoSql.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,11 +13,9 @@ namespace StockParser.Data
     public class StockContext
     {
         public StockContext(IWebParser parser,
-            MongoContextService contextService,
             CollectApiService collectApiService)
         {
             _webParser = parser;
-            _contextService = contextService;
             _collectApiService = collectApiService;
         }
         private List<BistStockDto> _Bist;
@@ -26,7 +23,6 @@ namespace StockParser.Data
 
 
         private IWebParser _webParser;
-        private MongoContextService _contextService;
         private CollectApiService _collectApiService;
 
         public async Task<BistStockDto> GetByName(string name)

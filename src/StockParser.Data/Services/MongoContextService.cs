@@ -1,4 +1,5 @@
 ﻿using StockParser.Domain.Dto;
+using StockParser.NoSql;
 using StockParser.NoSql.Models;
 using StockParser.NoSql.Repositories;
 using System;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StockParser.NoSql.Services
+namespace StockParser.Data.Services
 {
     public class MongoContextService
     {

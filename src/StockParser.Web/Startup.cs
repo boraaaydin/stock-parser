@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,17 +8,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using StockParser.Common;
 using StockParser.Data;
+using StockParser.Data.CoinMarketApi;
+using StockParser.Data.Services;
 using StockParser.Data.WebParser;
-using StockParser.Domain.Services;
 using StockParser.NoSql;
 using StockParser.NoSql.Models;
 using StockParser.NoSql.Repositories;
-using StockParser.NoSql.Services;
 using StockParser.Web.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StockParser.Web
 {
@@ -61,6 +55,7 @@ namespace StockParser.Web
             services.AddSingleton<StockContext>();
             services.AddSingleton<CollectApiService>();
             services.AddSingleton<WebService>();
+            services.AddSingleton<CoinMarketService>();
             //services.AddScoped<ICustomLogger, LogHelper>();
 
 

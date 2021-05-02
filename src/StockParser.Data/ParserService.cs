@@ -1,8 +1,6 @@
 ﻿using StockParser.Common;
-using StockParser.Data.WebParser;
+using StockParser.Data.Services;
 using StockParser.Domain;
-using StockParser.Domain.Services;
-using StockParser.NoSql.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,9 +31,7 @@ namespace StockParser.Data
             var lastBistRecord = await _mongoStockService.GetStock(DateTime.UtcNow.Date,"ISCTR");
             if (lastBistRecord.Entity == null)
             {
-                var currencyDtoList = await _stockContext.GetDailyCurrencyList();
-                var bistDtoList = await _stockContext.GetBist();
-                var bistResult = await _mongoStockService.InsertToStocks(bistDtoList, currencyDtoList);
+                var bistResult = await _mongoStockService.InsertToStocks();
 
                 if (bistResult.Status == ServiceStatus.Error)
                 {

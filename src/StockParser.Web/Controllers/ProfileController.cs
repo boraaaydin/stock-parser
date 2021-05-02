@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using StockParser.Data;
+using StockParser.Data.Services;
 using StockParser.Domain.Dto;
 using StockParser.NoSql.Models;
-using StockParser.NoSql.Services;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 
 namespace StockParser.Web.Controllers

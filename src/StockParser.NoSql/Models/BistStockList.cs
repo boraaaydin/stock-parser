@@ -10,6 +10,6 @@ namespace StockParser.NoSql.Models
         [BsonElement("Date")]
         public DateTime Date { get; set; }
         public IEnumerable<BistStock> BistStocks { get; set; }
-        public CurrencyDaily Currency { get; internal set; }
+        public CurrencyDaily Currency { get; set; }
     }
 }
