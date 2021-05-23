@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using StockParser.Data;
@@ -60,16 +61,25 @@ namespace StockParser.Web.Controllers
             var profile = await _service.InsertOwning(userId, owning);
             return View();
         }
-        public IActionResult InsertRule()
+
+        [HttpPost]
+        public async Task<IActionResult> RuleAddOrUpdate(RuleDto rule)
         {
+            var profile = await _service.AddOrUpdateRule(userId, rule);
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> InsertRule(RuleDto rule)
+        [HttpGet]
+        public async Task<IActionResult> RuleAddOrUpdate(string id)
         {
-            var profile = await _service.InsertRule(userId, rule);
-            return View();
+            var ruleDto = new RuleDto();
+            if (!string.IsNullOrEmpty(id))
+            {
+                var rule = await _service.GetRule(userId, id);
+                var bistDto = (await StockContext.GetBist()).Where(x => x.StockName == id).FirstOrDefault();
+                ruleDto = rule.ConvertToDto(bistDto);
+            }
+            return View(ruleDto);
         }
 
     }

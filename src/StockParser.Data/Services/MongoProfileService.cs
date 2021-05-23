@@ -48,12 +48,29 @@ namespace StockParser.Data.Services
             return profile;
         }
 
-        public async Task<Profile> InsertRule(Guid userId, RuleDto rule)
+        public async Task<Profile> AddOrUpdateRule(Guid userId, RuleDto ruleDto)
         {
             var profile = await _repo.GetByUserId(userId);
-            profile.Rules.Add(rule.Convert());
+            var existingRule = profile.Rules.FirstOrDefault(x => x.Name == ruleDto.Name);
+            if (existingRule != null)
+            {
+                existingRule.PurchaseValue = ruleDto.PurchaseValue;
+                existingRule.SellValue = ruleDto.SellValue;
+            }
+            else
+            {
+                profile.Rules.Add(ruleDto.Convert());
+            }
             await _repo.Update(profile.Id, profile);
             return profile;
+        }
+
+
+        public async Task<Rule> GetRule(Guid userId, string stockName)
+        {
+            var profile = await _repo.GetByUserId(userId);
+            var rule = profile.Rules.Where(x => x.Name == stockName).FirstOrDefault();
+            return rule;
         }
 
         public async Task SellOwning(Guid userId, OwningDto owning)

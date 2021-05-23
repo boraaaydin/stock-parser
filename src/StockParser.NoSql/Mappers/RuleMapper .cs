@@ -1,10 +1,7 @@
 ﻿using StockParser.Domain.Dto;
 using StockParser.Domain.Models;
-using StockParser.NoSql.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace StockParser.NoSql.Models
 {
@@ -20,9 +17,9 @@ namespace StockParser.NoSql.Models
         {
             var ruleDto =  new RuleDto
             {
-                //Mode = rule.Mode,
                 Name = rule.Name,
                 PurchaseValue = rule.PurchaseValue,
+                SellValue = rule.SellValue,
                 CurrentValue = bist?.FinalPrice
             };
             if (bist?.FinalPrice != null)
@@ -31,22 +28,9 @@ namespace StockParser.NoSql.Models
                 {
                     ruleDto.Percentage = (rule.PurchaseValue - bist?.FinalPrice) / bist.FinalPrice;
                 }
-                //TODO
-                //if(rule.SellValue != null)
-                //{
-
-                //}
             }
             return ruleDto;
         }
-
-        //private static decimal CalculatePercentage (Rule rule, BistStockDto bist)
-        //{
-        //    if(Decimal.TryParse(rule.Value, out decimal ruleValue))
-        //    {
-
-        //    }
-        //}
     }
 
 

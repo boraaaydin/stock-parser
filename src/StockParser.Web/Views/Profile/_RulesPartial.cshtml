@@ -3,7 +3,7 @@
                 <div class="card-header border-0">
                     <h3 class="card-title">Kurallarım</h3>
                     <div class="card-tools">
-                        <a href="~/profile/insertrule" class="btn btn-tool btn-sm">
+                        <a href=@Url.Action("RuleAddOrUpdate","Profile") class="btn btn-tool btn-sm">
                             <i class="fas fa-plus"></i>
                         </a>
                         <a href="#" class="btn btn-tool btn-sm">
@@ -19,6 +19,7 @@
                                 <th>Hedef Değeri</th>
                                 <th>Şimdiki Değeri</th>
                                 <th>Yüzde</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,9 +36,12 @@
                                     @rule.CurrentValue
                                 </td>
                                 <td>
-                                    <span>    %@Math.Round((rule.Percentage * 100 ?? 0), 2)</span>
+                                    <span> %@Math.Round((rule.Percentage * 100 ?? 0), 2)</span>
                                 </td>
-                    
+
+                                <td>
+                                    @Html.ActionLink("Edit","RuleAddOrUpdate","Profile",new { id= rule.Name})
+                                </td>
                             </tr>
                             }
                         </tbody>
