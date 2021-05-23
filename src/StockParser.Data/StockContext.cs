@@ -1,4 +1,5 @@
 ﻿using StockParser.Common;
+using StockParser.Data.CoinMarketApi;
 using StockParser.Data.Services;
 using StockParser.Data.WebParser;
 using StockParser.Domain.Dto;
@@ -13,17 +14,20 @@ namespace StockParser.Data
     public class StockContext
     {
         public StockContext(IWebParser parser,
-            CollectApiService collectApiService)
+            CollectApiService collectApiService,
+            CoinMarketService coinMarketService)
         {
             _webParser = parser;
             _collectApiService = collectApiService;
+            _coinMarketService = coinMarketService;
         }
         private List<BistStockDto> _Bist;
         private IEnumerable<CurrencyDto> _CurrencyList;
-
+        private CoinMarketModel _Coins;
 
         private IWebParser _webParser;
         private CollectApiService _collectApiService;
+        private CoinMarketService _coinMarketService;
 
         public async Task<BistStockDto> GetByName(string name)
         {
@@ -43,15 +47,6 @@ namespace StockParser.Data
             return _Bist;
         }
 
-        public async Task<StockGroup> CreateBistKeyGroup()
-        {
-            var list = (await GetBist()).Select(x => new StockKeyValue
-            {
-                Key = x.StockName.ToUpper()
-            });
-            return new StockGroup { GroupName = "Bist", StockKeyValuelist = list.ToList() };
-        }
-
         public async Task<IEnumerable<CurrencyDto>> GetDailyCurrencyList()
         {
             if (_CurrencyList == null)
@@ -60,6 +55,15 @@ namespace StockParser.Data
                 _CurrencyList = currenyList.ConvertToDto();
             }
             return _CurrencyList;
+        }
+
+        public async Task<CoinMarketModel> GetCoins()
+        {
+            if (_Coins == null)
+            {
+                _Coins = await _coinMarketService.GetMarket();
+            }
+            return _Coins;
         }
     }
 }

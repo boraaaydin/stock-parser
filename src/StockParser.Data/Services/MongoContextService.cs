@@ -12,14 +12,16 @@ namespace StockParser.Data.Services
     public class MongoContextService
     {
         private MongoContextRepository _repo;
+        private StockContext _stockContext;
         public List<StockNameValueDto> StockGroupList { get; set; }
 
-        public MongoContextService(MongoContextRepository repo)
+        public MongoContextService(MongoContextRepository repo, StockContext stockContext)
         {
             _repo = repo;
+            _stockContext = stockContext;
         }
 
-        public async Task<IEnumerable<StockGroup>> CreateMany(IEnumerable<StockGroup> groups)
+        public async Task<IEnumerable<StockGroup>> CreateStockGroups(IEnumerable<StockGroup> groups)
         {
             var list = await _repo.CreateMany(groups);
             return list;
@@ -46,5 +48,15 @@ namespace StockParser.Data.Services
                 ( x.StockName != null && x.StockName.ToLowerInvariant().Contains(term.ToLowerInvariant()))))
                 .ToList();
         }
+
+        public async Task<StockGroup> CreateBistKeyGroup()
+        {
+            var list = (await _stockContext.GetBist()).Select(x => new StockKeyValue
+            {
+                Key = x.StockName.ToUpper()
+            });
+            return new StockGroup { GroupName = "Bist", StockKeyValuelist = list.ToList() };
+        }
+
     }
 }

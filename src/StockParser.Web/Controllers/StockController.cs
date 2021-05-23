@@ -11,12 +11,10 @@ namespace StockParser.Web.Controllers
 {
     public class StockController : Controller
     {
-        private StockContext _context;
         private MongoContextService _service;
 
-        public StockController(StockContext context, MongoContextService service)
+        public StockController(MongoContextService service)
         {
-            _context = context;
             _service = service;
         }
 
@@ -28,9 +26,9 @@ namespace StockParser.Web.Controllers
         {
             var contextGroup = new List<StockGroup>
             {
-                await _context.CreateBistKeyGroup()
+                await _service.CreateBistKeyGroup()
             };
-            await _service.CreateMany(contextGroup);
+            await _service.CreateStockGroups(contextGroup);
         }
 
         [HttpPost]

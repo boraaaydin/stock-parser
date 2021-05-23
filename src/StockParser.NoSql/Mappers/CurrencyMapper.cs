@@ -9,7 +9,7 @@ namespace StockParser.NoSql.Mappers
     {
         public static CurrencyDaily ConvertToCurrency(IEnumerable<CurrencyDto> currencyList)
         {
-            if (currencyList != null)
+            if (currencyList != null && currencyList.Any())
             {
                 return new CurrencyDaily
                 {

@@ -51,7 +51,6 @@ namespace StockParser.Web
             services.AddSingleton<MongoContextService>();
             services.AddSingleton<MongoContextRepository>();
             services.AddSingleton<IWebParser, BigParaParser>();
-            services.AddScoped<ParserService>();
             services.AddSingleton<StockContext>();
             services.AddSingleton<CollectApiService>();
             services.AddSingleton<WebService>();

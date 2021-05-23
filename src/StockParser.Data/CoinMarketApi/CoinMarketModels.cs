@@ -1,5 +1,7 @@
-﻿using System;
+﻿using StockParser.Domain.Dto;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StockParser.Data.CoinMarketApi
 {
@@ -7,6 +9,16 @@ namespace StockParser.Data.CoinMarketApi
     {
         public Status status { get; set; }
         public List<Datum> data { get; set; }
+
+        public IEnumerable<CoinDto> ConvertToDto()
+        {
+            return data.Select(x => new CoinDto
+            {
+                Name = x.name,
+                Symbol = x.symbol,
+                Price = x.quote.USD.price
+            });
+        }
     }
 
     public class Status
