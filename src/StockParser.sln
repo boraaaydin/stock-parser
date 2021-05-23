@@ -3,14 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.ConsoleClient", "Clients\StockParser.Console\StockParser.ConsoleClient.csproj", "{3E30C1A7-642F-48F5-A09E-F90E9F9EDDB0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Function", "Clients\StockParser.Function\StockParser.Function.csproj", "{91927857-9C40-4182-A0B6-2F14A9005DD2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{FCCF4960-17CF-42D4-9863-53DDE1223AF1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Sql", "StockParser.Sql\StockParser.Sql.csproj", "{DB672040-A091-40A9-8050-42A23E2DF9FD}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{536E9E15-1BD6-4B2E-A7E8-A4D64FC08DE0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Data", "StockParser.Data\StockParser.Data.csproj", "{DB08C53F-C3B8-4EEB-B78B-A93CEBFF2F80}"
@@ -23,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Domain", "Stock
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Data.Tests", "Tests\StockParser.Data.Tests\StockParser.Data.Tests.csproj", "{549E28E8-58F8-43F2-B6AB-2C3A48E5A05C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockParser.Common", "StockParser.Common\StockParser.Common.csproj", "{CBEFF9E2-26D3-4F40-B456-7363830987A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockParser.Common", "StockParser.Common\StockParser.Common.csproj", "{CBEFF9E2-26D3-4F40-B456-7363830987A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,18 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3E30C1A7-642F-48F5-A09E-F90E9F9EDDB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E30C1A7-642F-48F5-A09E-F90E9F9EDDB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E30C1A7-642F-48F5-A09E-F90E9F9EDDB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E30C1A7-642F-48F5-A09E-F90E9F9EDDB0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91927857-9C40-4182-A0B6-2F14A9005DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91927857-9C40-4182-A0B6-2F14A9005DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91927857-9C40-4182-A0B6-2F14A9005DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91927857-9C40-4182-A0B6-2F14A9005DD2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB672040-A091-40A9-8050-42A23E2DF9FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB672040-A091-40A9-8050-42A23E2DF9FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB672040-A091-40A9-8050-42A23E2DF9FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB672040-A091-40A9-8050-42A23E2DF9FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB08C53F-C3B8-4EEB-B78B-A93CEBFF2F80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB08C53F-C3B8-4EEB-B78B-A93CEBFF2F80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB08C53F-C3B8-4EEB-B78B-A93CEBFF2F80}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -72,8 +52,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{3E30C1A7-642F-48F5-A09E-F90E9F9EDDB0} = {FCCF4960-17CF-42D4-9863-53DDE1223AF1}
-		{91927857-9C40-4182-A0B6-2F14A9005DD2} = {FCCF4960-17CF-42D4-9863-53DDE1223AF1}
 		{549E28E8-58F8-43F2-B6AB-2C3A48E5A05C} = {536E9E15-1BD6-4B2E-A7E8-A4D64FC08DE0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
