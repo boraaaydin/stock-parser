@@ -12,15 +12,15 @@ namespace StockParser.Web.Controllers
 {
     public class ProfileController : Controller
     {
-        private MongoProfileService _service;
+        private ProfileService _service;
 
-        public ProfileController(MongoProfileService service, StockContext stockContext)
+        public ProfileController(ProfileService service, ContextService stockContext)
         {
             _service = service;
             StockContext = stockContext;
         }
         public Guid userId { get; set; } = new Guid("610b083a-3c17-456b-baca-5b7fde4d88a6");
-        public StockContext StockContext { get; }
+        public ContextService StockContext { get; }
 
         public async Task<IActionResult> Index()
         {
@@ -77,7 +77,7 @@ namespace StockParser.Web.Controllers
             {
                 var rule = await _service.GetRule(userId, id);
                 var bistDto = (await StockContext.GetBist()).Where(x => x.StockName == id).FirstOrDefault();
-                ruleDto = rule.ConvertToDto(bistDto);
+                ruleDto = rule.ConvertToDto(bistDto.ConvertToDto());
             }
             return View(ruleDto);
         }

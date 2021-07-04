@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using StockParser.Domain.Models;
+using System;
 
-namespace StockParser.Domain.Models
+namespace StockParser.Domain.Dto
 {
-    public class BistStockDto
+    public class WebBistDto
     {
         public string StockName { get; set; }
         public decimal FinalPrice { get; set; }
@@ -16,5 +15,15 @@ namespace StockParser.Domain.Models
         public long VolumeLot { get; set; }
         public long VolumeTL { get; set; }
         public DateTime Date { get; set; }
+
+        public StockCodeRate ConvertToDto()
+        {
+            return new StockCodeRate
+            {
+                Code = StockName,
+                Rate = FinalPrice
+            };
+        }
+
     }
 }

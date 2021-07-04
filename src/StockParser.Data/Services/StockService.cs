@@ -11,15 +11,15 @@ using System.Threading.Tasks;
 
 namespace StockParser.Data.Services
 {
-    public class MongoStockService 
+    public class StockService 
     {
         private MongoStockRepository _stockRepo;
-        private StockContext _stockContext;
+        private ContextService _contextService;
 
-        public MongoStockService(MongoStockRepository stockRepo, StockContext stockContext)
+        public StockService(MongoStockRepository stockRepo, ContextService stockContext)
         {
             _stockRepo = stockRepo;
-            _stockContext = stockContext;
+            _contextService = stockContext;
         }
 
         public async Task<ServiceResult> InsertAllData()
@@ -53,12 +53,12 @@ namespace StockParser.Data.Services
 
         }
 
-        public async  Task<ServiceResult<BistStockDto>> GetStock(DateTime date, string stockName)
+        public async  Task<ServiceResult<StockCodeRate>> GetStock(DateTime date, string stockName)
         {
             try
             {
-                var stockList = await _stockRepo.GetStockByDate(date);
-                return new ServiceResultOk<BistStockDto>(stockList?.FirstOrDefault());
+                var stockData = await _stockRepo.GetStockByDate(date);
+                return new ServiceResultOk<StockCodeRate>(stockData?.BistStocks?.Data.FirstOrDefault());
             }
             catch (Exception ex)
             {
@@ -68,15 +68,15 @@ namespace StockParser.Data.Services
 
         public async Task<ServiceResult> InsertAllStocks()
         {
-            var currencyList = new List<CurrencyDto>();// await _stockContext.GetDailyCurrencyList();
-            var bistList = new List<BistStockDto>();// await _stockContext.GetBist();
+            var currencyList = await GetLatestCurrency();
+            var bistList = await GetLatestBist();
             var coinDtoList = await GetLatestCoinData();
 
-            var date = DateTime.Now.Date; // bistList.FirstOrDefault().Date;
-            var entity = new BistStockList
+            var date = DateTime.UtcNow.Date; // bistList.FirstOrDefault().Date;
+            var entity = new StockData
             {
                 Date = date,
-                BistStocks = bistList.Select(x => x.ConvertToBistStock()),
+                BistStocks = BistStockMapper.ConvertToBistStock(bistList),
                 Currency = CurrencyMapper.ConvertToCurrency(currencyList),
                 Coins = CoinMapper.ConvertToDailyCoin(coinDtoList)
             };
@@ -88,11 +88,24 @@ namespace StockParser.Data.Services
             return new ServiceResult(ServiceStatus.NotCreated);
         }
 
-        public async Task<IEnumerable<CoinDto>> GetLatestCoinData()
+        public async Task<IEnumerable<StockCodeRate>> GetLatestCurrency()
         {
-            var coinMarketData = await _stockContext.GetCoins();
-            var coinDto = coinMarketData.ConvertToDto();
+            var data = await _contextService.GetDailyCurrencyList();
+            var dto = data.Select(x => x.ConvertToDto());
+            return dto;
+        }
+
+        public async Task<IEnumerable<StockCodeRate>> GetLatestCoinData()
+        {
+            var coinMarketData = await _contextService.GetCoins();
+            var coinDto = CoinMapper.ConvertToDto(coinMarketData);
             return coinDto;
+        }
+
+        public async Task<IEnumerable<StockCodeRate>> GetLatestBist()
+        {
+            var bistData = await _contextService.GetBist();
+            return bistData.Select(x => x.ConvertToDto());
         }
     }
 }

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace StockParser.Data.Services
 {
-    public class MongoProfileService
+    public class ProfileService
     {
         private MongoProfileRepository _repo;
 
-        public MongoProfileService(MongoProfileRepository repo)
+        public ProfileService(MongoProfileRepository repo)
         {
             _repo = repo;
         }

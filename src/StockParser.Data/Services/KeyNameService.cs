@@ -1,27 +1,25 @@
 ﻿using StockParser.Domain.Dto;
 using StockParser.NoSql;
 using StockParser.NoSql.Models;
-using StockParser.NoSql.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace StockParser.Data.Services
 {
-    public class MongoContextService
+    public class KeyNameService
     {
-        private MongoContextRepository _repo;
-        private StockContext _stockContext;
+        private KeyNameRepository _repo;
+        private ContextService _stockContext;
         public List<StockNameValueDto> StockGroupList { get; set; }
 
-        public MongoContextService(MongoContextRepository repo, StockContext stockContext)
+        public KeyNameService(KeyNameRepository repo, ContextService stockContext)
         {
             _repo = repo;
             _stockContext = stockContext;
         }
 
-        public async Task<IEnumerable<StockGroup>> CreateStockGroups(IEnumerable<StockGroup> groups)
+        public async Task<IEnumerable<KeyNameGroup>> CreateStockGroups(IEnumerable<KeyNameGroup> groups)
         {
             var list = await _repo.CreateMany(groups);
             return list;
@@ -31,9 +29,9 @@ namespace StockParser.Data.Services
         {
             if (StockGroupList == null)
             {
-                var dbRecords = await _repo.GetStockNameValue();
-                dbRecords.ForEach(group => {
-                    var list = group?.StockKeyValuelist.Select(f => new StockNameValueDto
+                var keyNameGroups = await _repo.GetKeyNameGroups();
+                keyNameGroups.ForEach(group => {
+                    var list = group?.KeyNameList.Select(f => new StockNameValueDto
                     {
                         GroupName = group.GroupName,
                         StockKey = f.Key,
@@ -49,13 +47,13 @@ namespace StockParser.Data.Services
                 .ToList();
         }
 
-        public async Task<StockGroup> CreateBistKeyGroup()
+        public async Task<KeyNameGroup> CreateBistKeyGroup()
         {
-            var list = (await _stockContext.GetBist()).Select(x => new StockKeyValue
+            var list = (await _stockContext.GetBist()).Select(x => new KeyNameItem
             {
                 Key = x.StockName.ToUpper()
             });
-            return new StockGroup { GroupName = "Bist", StockKeyValuelist = list.ToList() };
+            return new KeyNameGroup { GroupName = "Bist", KeyNameList = list.ToList() };
         }
 
     }

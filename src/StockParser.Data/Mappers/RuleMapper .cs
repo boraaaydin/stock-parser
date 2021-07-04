@@ -7,26 +7,26 @@ namespace StockParser.NoSql.Models
 {
     public static class RuleMapper
     {
-        public static List<RuleDto> ConvertToDtoList(this List<Rule> rules, List<BistStockDto> bist)
+        public static List<RuleDto> ConvertToDtoList(this List<Rule> rules, List<StockCodeRate> bist)
         {
             var rulesDto = new List<RuleDto>();
-            rules.ForEach(x => rulesDto.Add(x.ConvertToDto(bist.FirstOrDefault(y => y.StockName == x.Name))));
+            rules.ForEach(x => rulesDto.Add(x.ConvertToDto(bist.FirstOrDefault(y => y.Code == x.Name))));
             return rulesDto;
         }
-        public static RuleDto ConvertToDto(this Rule rule, BistStockDto bist)
+        public static RuleDto ConvertToDto(this Rule rule, StockCodeRate bist)
         {
             var ruleDto =  new RuleDto
             {
                 Name = rule.Name,
                 PurchaseValue = rule.PurchaseValue,
                 SellValue = rule.SellValue,
-                CurrentValue = bist?.FinalPrice
+                CurrentValue = bist?.Rate
             };
-            if (bist?.FinalPrice != null)
+            if (bist?.Rate != null)
             {
                 if (rule.PurchaseValue != null)
                 {
-                    ruleDto.Percentage = (rule.PurchaseValue - bist?.FinalPrice) / bist.FinalPrice;
+                    ruleDto.Percentage = (rule.PurchaseValue - bist?.Rate) / bist.Rate;
                 }
             }
             return ruleDto;

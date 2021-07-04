@@ -44,14 +44,14 @@ namespace StockParser.Web
             services.AddSingleton<IMongoDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoDatabaseSettings>>().Value);
 
-            services.AddScoped<MongoStockService>();
+            services.AddScoped<StockService>();
             services.AddSingleton<MongoStockRepository>();
             services.AddScoped<MongoProfileRepository>();
-            services.AddScoped<MongoProfileService>();
-            services.AddSingleton<MongoContextService>();
-            services.AddSingleton<MongoContextRepository>();
-            services.AddSingleton<IWebParser, BigParaParser>();
-            services.AddSingleton<StockContext>();
+            services.AddScoped<ProfileService>();
+            services.AddSingleton<KeyNameService>();
+            services.AddSingleton<KeyNameRepository>();
+            services.AddSingleton<BigParaParser>();
+            services.AddSingleton<ContextService>();
             services.AddSingleton<CollectApiService>();
             services.AddSingleton<WebService>();
             services.AddSingleton<CoinMarketService>();

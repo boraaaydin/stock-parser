@@ -119,7 +119,7 @@ namespace StockParser.Data.Test
                     PurchaseValue = 10 + owning
                 }) ; 
             }
-            var service = new MongoProfileService(null);
+            var service = new ProfileService(null);
             OwningDto soldOwning = new OwningDto()
             {
                 Name = StockName,
@@ -137,7 +137,7 @@ namespace StockParser.Data.Test
         {
             int soldQuantity = 7;
             var profile = profileWith_8_2;
-            var service = new MongoProfileService(null);
+            var service = new ProfileService(null);
             OwningDto soldOwning = new OwningDto()
             {
                 Name = StockName,
@@ -155,7 +155,7 @@ namespace StockParser.Data.Test
         {
             int soldQuantity = 10;
             var profile = profileWith_8_2;
-            var service = new MongoProfileService(null);
+            var service = new ProfileService(null);
             OwningDto soldOwning = new OwningDto()
             {
                 Name = StockName,
@@ -172,7 +172,7 @@ namespace StockParser.Data.Test
         {
             int soldQuantity = 12;
             var profile = profileWith_8_2;
-            var service = new MongoProfileService(null);
+            var service = new ProfileService(null);
             OwningDto soldOwning = new OwningDto()
             {
                 Name = StockName,

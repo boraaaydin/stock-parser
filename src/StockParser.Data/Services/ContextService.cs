@@ -1,19 +1,16 @@
 ﻿using StockParser.Common;
 using StockParser.Data.CoinMarketApi;
-using StockParser.Data.Services;
 using StockParser.Data.WebParser;
 using StockParser.Domain.Dto;
-using StockParser.Domain.Models;
-using StockParser.NoSql.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace StockParser.Data
 {
-    public class StockContext
+    public class ContextService
     {
-        public StockContext(IWebParser parser,
+        public ContextService(BigParaParser parser,
             CollectApiService collectApiService,
             CoinMarketService coinMarketService)
         {
@@ -21,20 +18,20 @@ namespace StockParser.Data
             _collectApiService = collectApiService;
             _coinMarketService = coinMarketService;
         }
-        private List<BistStockDto> _Bist;
+        private List<WebBistDto> _Bist;
         private IEnumerable<CurrencyDto> _CurrencyList;
         private CoinMarketModel _Coins;
 
-        private IWebParser _webParser;
+        private BigParaParser _webParser;
         private CollectApiService _collectApiService;
         private CoinMarketService _coinMarketService;
 
-        public async Task<BistStockDto> GetByName(string name)
+        public async Task<WebBistDto> GetByName(string name)
         {
             return (await GetBist()).FirstOrDefault(x => x.StockName == name);
         }
 
-        public async Task<List<BistStockDto>> GetBist()
+        public async Task<List<WebBistDto>> GetBist()
         {
             if (_Bist == null)
             {

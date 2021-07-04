@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StockParser.Domain.Models;
+using System;
 
 namespace StockParser.Domain.Dto
 {
@@ -12,6 +9,15 @@ namespace StockParser.Domain.Dto
         public string CurrencyCode { get; set; }
         public string CurrencyName { get; set; }
         public string BaseCode { get; set; }
-        public double Rate { get; set; }
+        public decimal Rate { get; set; }
+
+        public StockCodeRate ConvertToDto()
+        {
+            return new StockCodeRate
+            {
+                Code = CurrencyCode,
+                Rate = Rate
+            };
+        }
     }
 }

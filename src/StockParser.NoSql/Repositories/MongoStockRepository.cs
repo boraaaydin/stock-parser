@@ -11,20 +11,20 @@ using System.Threading.Tasks;
 
 namespace StockParser.NoSql
 {
-    public class MongoStockRepository : BaseMongoRepository<BistStockList>, IStockRepository
+    public class MongoStockRepository : BaseMongoRepository<StockData>//, IStockRepository
     {
         public MongoStockRepository(IMongoDatabaseSettings settings) : base(settings, "Stocks")
         {
         }
 
-        public async Task<List<BistStockDto>> GetStockByDate(DateTime date)
+        public async Task<StockData> GetStockByDate(DateTime date)
         {
             //return  await _entities.FindAsync<BistStockList>(entity => entity.Date == date);
             //var filter= Builders.Filter<BistStockList>.Eq(x=>x.);
-            var builder = Builders<BistStockList>.Filter;
+            var builder = Builders<StockData>.Filter;
             var filter = builder.Eq("Date", date);
-            var list = await _entities.Find(filter)?.FirstOrDefaultAsync();
-            return list.ConvertToList();
+            var data = await _entities.Find(filter)?.FirstOrDefaultAsync();
+            return data;
         }
 
         //public Task<StockDto> GetTodaysRecordFromStocks(string stockName)

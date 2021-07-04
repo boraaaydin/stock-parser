@@ -6,9 +6,9 @@ namespace StockParser.Web.Controllers
 {
     public class BistController : Controller
     {
-        private MongoStockService _service;
+        private StockService _service;
 
-        public BistController(MongoStockService service)
+        public BistController(StockService service)
         {
             _service = service;
         }

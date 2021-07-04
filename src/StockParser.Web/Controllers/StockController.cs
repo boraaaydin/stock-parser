@@ -11,9 +11,9 @@ namespace StockParser.Web.Controllers
 {
     public class StockController : Controller
     {
-        private MongoContextService _service;
+        private KeyNameService _service;
 
-        public StockController(MongoContextService service)
+        public StockController(KeyNameService service)
         {
             _service = service;
         }
@@ -24,7 +24,7 @@ namespace StockParser.Web.Controllers
         /// <returns></returns>
         public async Task Insert()
         {
-            var contextGroup = new List<StockGroup>
+            var contextGroup = new List<KeyNameGroup>
             {
                 await _service.CreateBistKeyGroup()
             };

@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using StockParser.Common;
 using StockParser.Domain;
+using StockParser.Domain.Dto;
 using StockParser.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace StockParser.Data.WebParser
 {
-    public class BigParaParser:IWebParser
+    public class BigParaParser//:IWebParser
     {
         public BigParaParser(
             //ICustomLogger logger
@@ -17,21 +18,21 @@ namespace StockParser.Data.WebParser
         {
             //_logger = logger;
         }
-        private List<BistStockDto> StockData;
+        private List<WebBistDto> StockData;
 
         //public ICustomLogger _logger { get; }
 
-        public async Task<ServiceResult<List<BistStockDto>>> GetStockData()
+        public async Task<ServiceResult<List<WebBistDto>>> GetStockData()
         {
             try
             {
                 //_logger.LogInformation("GetStockData function called");
                 if (StockData == null)
                 {
-                    StockData = new List<BistStockDto>();
+                    StockData = new List<WebBistDto>();
                     var mainUrl = "http://push.bigpara.com/borsa/hisse-fiyatlari/";
                     var letterlist = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V", "Y", "Z" };
-                    var taskList = new List<Task<HashSet<BistStockDto>>>();
+                    var taskList = new List<Task<HashSet<WebBistDto>>>();
                     foreach (var letter in letterlist)
                     {
                         var url = new Uri(new Uri(mainUrl), $"{letter}-harfi-ile-baslayan-hisseler");
@@ -52,17 +53,17 @@ namespace StockParser.Data.WebParser
                     }
                     //_logger.LogTrace($"Total {StockData.Count} stocks parsed");
                 }
-                return new ServiceResult<List<BistStockDto>>(ServiceStatus.Ok, StockData);
+                return new ServiceResult<List<WebBistDto>>(ServiceStatus.Ok, StockData);
             }
             catch (Exception ex)
             {
                 //_logger.LogError("GetStockData:"+ex.Message);
-                return new ServiceResult<List<BistStockDto>>(ServiceStatus.Error, null,"GetStockData hata: "+ex.Message);
+                return new ServiceResult<List<WebBistDto>>(ServiceStatus.Error, null,"GetStockData hata: "+ex.Message);
             }
 
         }
 
-        public async Task<HashSet<BistStockDto>> GetDataPerPage(Uri url)
+        public async Task<HashSet<WebBistDto>> GetDataPerPage(Uri url)
         {
             try
             {
@@ -76,10 +77,10 @@ namespace StockParser.Data.WebParser
 
                 var tableDiv = pageDocument.DocumentNode.SelectNodes("//div[@class='tableCnt']//div[@class='tBody']//ul");
 
-                var stockList = new List<BistStockDto>();
+                var stockList = new List<WebBistDto>();
                 foreach (var row in tableDiv)
                 {
-                    var stock = new BistStockDto();
+                    var stock = new WebBistDto();
                     var list = new List<string>();
                     var coloums = row.SelectNodes("li");
                     foreach (var coloum in coloums)
@@ -118,7 +119,7 @@ namespace StockParser.Data.WebParser
                     }
                     stockList.Add(stock);
                 }
-                return new HashSet<BistStockDto>(stockList);
+                return new HashSet<WebBistDto>(stockList);
             }
             catch (Exception ex)
             {

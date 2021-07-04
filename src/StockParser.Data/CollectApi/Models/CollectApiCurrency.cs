@@ -35,7 +35,7 @@ namespace StockParser.Data.CollectApi.Models
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("rate")]
-        public double Rate { get; set; }
+        public decimal Rate { get; set; }
         [JsonProperty("calculatedstr")]
         public double Calculatedstr { get; set; }
         [JsonProperty("calculated")]

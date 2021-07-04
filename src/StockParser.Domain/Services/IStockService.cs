@@ -9,7 +9,7 @@ namespace StockParser.Domain.Services
 {
     public interface IStockService
     {
-        Task<ServiceResult> InsertToStocks(List<BistStockDto> list);
-        Task<ServiceResult<BistStockDto>> GetStock(DateTime date, String stockName);
+        Task<ServiceResult> InsertToStocks(List<StockCodeRate> list);
+        Task<ServiceResult<StockCodeRate>> GetStock(DateTime date, String stockName);
     }
 }

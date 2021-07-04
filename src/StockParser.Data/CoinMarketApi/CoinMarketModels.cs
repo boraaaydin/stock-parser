@@ -10,15 +10,6 @@ namespace StockParser.Data.CoinMarketApi
         public Status status { get; set; }
         public List<Datum> data { get; set; }
 
-        public IEnumerable<CoinDto> ConvertToDto()
-        {
-            return data.Select(x => new CoinDto
-            {
-                Name = x.name,
-                Symbol = x.symbol,
-                Price = x.quote.USD.price
-            });
-        }
     }
 
     public class Status
@@ -43,7 +34,7 @@ namespace StockParser.Data.CoinMarketApi
 
     public class USD
     {
-        public double price { get; set; }
+        public decimal price { get; set; }
         public double volume_24h { get; set; }
         public double percent_change_1h { get; set; }
         public double percent_change_24h { get; set; }
