@@ -24,10 +24,10 @@ jobs:
         dotnet-version: '5.0.x'
 
     - name: Build with dotnet
-      run: dotnet build StockParser.Web --configuration Release
+      run: dotnet build src/StockParser.Web/StockParser.Web.csproj --configuration Release
 
     - name: dotnet publish
-      run: dotnet publish StockParser.Web  -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      run: dotnet publish src/StockParser.Web/StockParser.Web.csproj  -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
     - name: Run Azure webapp deploy action using publish profile credentials
       uses: azure/webapps-deploy@v2
